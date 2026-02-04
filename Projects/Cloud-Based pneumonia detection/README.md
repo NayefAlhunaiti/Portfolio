@@ -1,9 +1,5 @@
-In this project, I am going to build the classification model that would serve as the backbone of this product. (Don't worry, there's no coding involved!) For this task, we will use AWS Rekognition(opens in a new tab), an automated machine learning (AutoML) tool that will allow us to build the model and host it in the cloud. In order to appreciate how training data impact models, we will build models with 4 variants of the dataset. This project is designed to test your ability to
-
-Build a model using an AutoML platform, and
-Understand how properties of data impact performance of models.
-The Data
-We'll be using the same Kaggle chest x-ray dataset(opens in a new tab) that we used in the previous project, except here, we'll skip the step of using Figure Eight's platform to label the data, and just use the original labels supplied with the data on Kaggle.
+In this project, I am going to build the classification model that would serve as the backbone of this product. (Don't worry, there's no coding involved!) For this task, I use AWS Rekognition, an automated machine learning (AutoML) tool that will allow us to build the model and host it in the cloud. In order to appreciate how training data impact models, we will build models with 4 variants of the dataset. This project is designed to test your ability to Build a model using an AutoML platform, and Understand how properties of data impact performance of models.
+The Data We'll be using the same Kaggle chest x-ray dataset, we'll skip the step of using Figure Eight's platform to label the data, and just use the original labels supplied with the data on Kaggle.
 
 The Four Parts of the Project
 We will train four different models using four variants of the pneumonia dataset. Recall that the dataset contains childrens' chest x-ray images, and that they are classified into two classes, "normal" and "pneumonia". The following sections describe the steps you must take to create each model.
