@@ -1,0 +1,756 @@
+ssh -i $env:USERPROFILE\.ssh\pi_key pi@192.168.100.61
+python3 -m venv .venv
+source .venv/bin/activate
+
+import os
+import re
+import json
+import time
+import sqlite3
+from typing import Optional, List, Tuple, Dict
+
+from flask import Flask, request, jsonify, render_template_string
+
+# =========================
+# CONFIG
+# =========================
+APP_PORT = 8080
+DB_PATH = os.path.expanduser("~/pcm_buddy/pcm.db")
+DEFAULT_PRIMARY_NAME = "Nayef"
+
+# Keep these tight for 2GB Pi
+HISTORY_LIMIT = 60
+SIM_HITS = 5
+EVIDENCE_MAX = 2
+THEME_TERMS_MAX = 6
+QUESTIONS_MAX = 2
+
+# LLM env vars (optional)
+# export PCM_MODEL_PATH="/home/pi/models/qwen2.5-0.5b-instruct-q4_k_m.gguf"
+# export PCM_N_THREADS=4
+# export PCM_N_CTX=512
+# export PCM_MAX_TOKENS=90
+# export PCM_TEMPERATURE=0.25
+# export PCM_TOP_P=0.80
+# export PCM_REPEAT_PENALTY=1.15
+PCM_N_CTX = int(os.environ.get("PCM_N_CTX", "512"))
+PCM_N_THREADS = int(os.environ.get("PCM_N_THREADS", "4"))
+PCM_MAX_TOKENS = int(os.environ.get("PCM_MAX_TOKENS", "90"))
+PCM_TEMPERATURE = float(os.environ.get("PCM_TEMPERATURE", "0.25"))
+PCM_TOP_P = float(os.environ.get("PCM_TOP_P", "0.80"))
+PCM_REPEAT_PENALTY = float(os.environ.get("PCM_REPEAT_PENALTY", "1.15"))
+
+app = Flask(__name__)
+
+# =========================
+# LLM (optional)
+# =========================
+LLM_AVAILABLE = False
+LLM = None
+try:
+    from llama_cpp import Llama  # type: ignore
+    LLM_AVAILABLE = True
+except Exception:
+    LLM_AVAILABLE = False
+
+
+def llm_init_if_needed():
+    global LLM
+    if LLM is not None:
+        return
+    if not LLM_AVAILABLE:
+        return
+
+    model_path = os.environ.get("PCM_MODEL_PATH", "").strip()
+    if not model_path:
+        return
+    if not os.path.exists(model_path):
+        return
+
+    n_ctx = int(os.environ.get("PCM_N_CTX", "512"))
+    n_threads = int(os.environ.get("PCM_N_THREADS", "4"))
+
+    # Minimal init for Pi stability
+    try:
+        LLM = Llama(
+            model_path=model_path,
+            n_ctx=n_ctx,
+            n_threads=n_threads,
+            seed=42,
+            verbose=False,
+        )
+    except TypeError:
+        # Some versions might not support seed=
+        LLM = Llama(
+            model_path=model_path,
+            n_ctx=n_ctx,
+            n_threads=n_threads,
+            verbose=False,
+        )
+
+
+def sanitize_llm_text(t: str) -> str:
+    # Remove code fences and backticks
+    t = re.sub(r"```.*?```", "", t, flags=re.S)
+    t = t.replace("`", "")
+
+    # Remove JSON-ish blobs if the model tries to print them
+    # (not perfect, but helps a lot)
+    t = re.sub(r"\{[\s\S]*?\}", "", t)
+
+    # Kill obvious tool/code/commands
+    bad_markers = [
+        "import ", "def ", "class ", "pip ", "sudo ", "apt ", "curl ", "wget ",
+        "<PACK>", "</PACK>", "PACK(JSON", "PACK:", "```"
+    ]
+    low = t.lower()
+    if any(m.lower() in low for m in bad_markers):
+        return ""
+
+    # Must start with Mirror: (strict format)
+    t = t.strip()
+    if not t.startswith("Mirror:"):
+        return ""
+
+    return t.strip()
+
+
+SYSTEM_ULTRA = """
+You are PCM Buddy Ultra.
+
+Hard rules:
+- Plain text only.
+- NEVER output code, commands, JSON, or markdown blocks.
+- NEVER repeat the PACK or any part of it.
+- If uncertain, say: "I’m not sure." and ask ONE clarifying question.
+- Be specific and practical. No fluff.
+
+Output EXACTLY this format:
+Mirror:
+Pattern:
+Evidence:
+2 Questions:
+Next step (10 min):
+Follow-up:
+""".strip()
+
+
+def llm_reply(pack: Dict) -> Optional[str]:
+    """
+    Robust prompt that prevents PACK echo:
+    - PACK is wrapped in <PACK> tags
+    - Explicitly says DO NOT repeat PACK
+    - Forces response to start at "Mirror:"
+    - Uses stop tokens + sanitizer + echo detection
+    """
+    llm_init_if_needed()
+    if LLM is None:
+        return None
+
+    payload = json.dumps(pack, ensure_ascii=False, indent=2)
+
+    prompt = (
+        SYSTEM_ULTRA
+        + "\n\n"
+        + "The PACK below is INTERNAL CONTEXT. DO NOT repeat it. DO NOT summarize it.\n"
+        + "Only use it to answer.\n\n"
+        + "<PACK>\n"
+        + payload
+        + "\n</PACK>\n\n"
+        + "Now write the final answer starting EXACTLY with:\n"
+        + "Mirror:\n"
+    )
+
+    try:
+        out = LLM(
+            prompt,
+            temperature=PCM_TEMPERATURE,
+            top_p=PCM_TOP_P,
+            max_tokens=PCM_MAX_TOKENS,
+            repeat_penalty=PCM_REPEAT_PENALTY,
+            # Stop if it tries to open JSON or code or tags again
+            stop=["<PACK>", "</PACK>", "```", "{", "}", "PACK", "PACK("],
+        )
+        txt = (out["choices"][0]["text"] or "").strip()
+
+        # If it looks like it echoed keys, treat as failure
+        low = txt.lower()
+        if ("prompt" in low and "mode" in low and "evidence" in low) or "<pack" in low:
+            return None
+
+        txt2 = sanitize_llm_text(txt)
+        return txt2 if txt2 else None
+
+    except Exception as e:
+        print("LLM ERROR:", e)
+        return None
+
+
+# =========================
+# Database
+# =========================
+def db() -> sqlite3.Connection:
+    con = sqlite3.connect(DB_PATH)
+    con.row_factory = sqlite3.Row
+    return con
+
+
+def ensure_schema():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    con = db()
+    cur = con.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name_display TEXT NOT NULL,
+        name_norm TEXT NOT NULL UNIQUE,
+        created_ts INTEGER NOT NULL,
+        last_seen_ts INTEGER NOT NULL
+    )
+    """)
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS messages(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        ts INTEGER NOT NULL,
+        role TEXT NOT NULL,  -- user|buddy
+        text TEXT NOT NULL
+    )
+    """)
+
+    con.commit()
+    con.close()
+
+
+def norm_name(s: str) -> str:
+    return " ".join(s.strip().lower().split())
+
+
+def get_user(uid: int) -> Optional[sqlite3.Row]:
+    con = db()
+    row = con.execute("SELECT * FROM users WHERE id=?", (uid,)).fetchone()
+    con.close()
+    return row
+
+
+def get_last_user() -> Optional[sqlite3.Row]:
+    con = db()
+    row = con.execute("SELECT * FROM users ORDER BY last_seen_ts DESC LIMIT 1").fetchone()
+    con.close()
+    return row
+
+
+def touch_user(uid: int):
+    con = db()
+    con.execute("UPDATE users SET last_seen_ts=? WHERE id=?", (int(time.time()), uid))
+    con.commit()
+    con.close()
+
+
+def get_or_create_user(name_display: str) -> int:
+    nd = name_display.strip()
+    nn = norm_name(nd)
+    ts = int(time.time())
+
+    con = db()
+    cur = con.cursor()
+
+    row = cur.execute("SELECT id FROM users WHERE name_norm=?", (nn,)).fetchone()
+    if row:
+        uid = int(row["id"])
+        cur.execute("UPDATE users SET name_display=?, last_seen_ts=? WHERE id=?", (nd, ts, uid))
+    else:
+        cur.execute(
+            "INSERT INTO users(name_display,name_norm,created_ts,last_seen_ts) VALUES(?,?,?,?)",
+            (nd, nn, ts, ts)
+        )
+        uid = int(cur.lastrowid)
+
+    con.commit()
+    con.close()
+    return uid
+
+
+def add_message(uid: int, role: str, text: str):
+    con = db()
+    con.execute(
+        "INSERT INTO messages(user_id,ts,role,text) VALUES(?,?,?,?)",
+        (uid, int(time.time()), role, text)
+    )
+    con.commit()
+    con.close()
+
+
+def load_user_texts(uid: int, limit: int = HISTORY_LIMIT) -> List[str]:
+    con = db()
+    rows = con.execute(
+        "SELECT text FROM messages WHERE user_id=? AND role='user' ORDER BY id DESC LIMIT ?",
+        (uid, limit)
+    ).fetchall()
+    con.close()
+    return [str(r["text"]) for r in reversed(rows)]
+
+
+def user_label(uid: Optional[int]) -> str:
+    if not uid:
+        return "User: (none)"
+    u = get_user(int(uid))
+    return f"User: {u['name_display']}" if u else "User: (none)"
+
+
+# =========================
+# PCM Brain
+# =========================
+EMOTION_WORDS = re.compile(r"\b(feel|feeling|down|sad|hurt|lonely|overwhelmed|stressed|anxious|tired|exhausted)\b", re.I)
+UNCERTAINTY = re.compile(r"\b(i\s+don'?t\s+know|dont\s+know|unsure|confused|lost|stuck|no\s+idea|what\s+do\s+i\s+do)\b", re.I)
+INSIGHT = re.compile(r"\b(insight|thoughts|perspective|analyze|analysis|understand|meaning)\b", re.I)
+
+LOOP_RULES = [
+    ("avoidance", [r"\bavoid\b", r"\bprocrastinat", r"\bput it off\b", r"\bcan't bring myself\b"]),
+    ("perfectionism", [r"\bperfect\b", r"\bnot good enough\b", r"\bfailure\b", r"\bimposter\b"]),
+    ("rumination", [r"\bcan'?t stop thinking\b", r"\boverthink\b", r"\bwhat if\b", r"\breplay\b"]),
+    ("conflict_avoidance", [r"\bconfront\b", r"\bhard conversation\b", r"\bafraid to say\b", r"\bpeople please\b"]),
+]
+
+
+def detect_mode(prompt: str) -> str:
+    t = prompt.strip()
+    emo = bool(EMOTION_WORDS.search(t))
+    unc = bool(UNCERTAINTY.search(t))
+    ins = bool(INSIGHT.search(t))
+    if emo and not unc:
+        return "supportive"
+    if unc:
+        return "direct"
+    if ins:
+        return "socratic"
+    return "socratic"
+
+
+def detect_loops(prompt: str, history_text: str) -> List[str]:
+    text = (prompt + "\n" + history_text).lower()
+    found = []
+    for name, pats in LOOP_RULES:
+        for p in pats:
+            if re.search(p, text):
+                found.append(name)
+                break
+    return found[:2]
+
+
+def tfidf_cosine_hits(texts: List[str], query: str, topk: int) -> List[Tuple[float, str]]:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    import numpy as np
+
+    if not texts:
+        return []
+    vec = TfidfVectorizer(max_features=3500, ngram_range=(1, 2), stop_words="english")
+    X = vec.fit_transform(texts)
+    qv = vec.transform([query])
+    sims = (X @ qv.T).toarray().ravel()
+    idx = np.argsort(sims)[::-1][:topk]
+    out = []
+    for i in idx:
+        s = float(sims[i])
+        if s < 0.10:
+            continue
+        out.append((s, texts[int(i)]))
+    return out
+
+
+def theme_keywords(texts: List[str]) -> List[str]:
+    # Lightweight "themes": top TF-IDF terms over history
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    import numpy as np
+
+    if len(texts) < 10:
+        return []
+    vec = TfidfVectorizer(max_features=2500, ngram_range=(1, 2), stop_words="english")
+    X = vec.fit_transform(texts)
+    weights = np.asarray(X.mean(axis=0)).ravel()
+    terms = vec.get_feature_names_out()
+    top = weights.argsort()[::-1][:THEME_TERMS_MAX]
+    return [terms[i] for i in top if weights[i] > 0][:THEME_TERMS_MAX]
+
+
+def build_pack(user_name: str, prompt: str, history_texts: List[str]) -> Dict:
+    mode = detect_mode(prompt)
+    loops = detect_loops(prompt, "\n".join(history_texts[-40:]))
+
+    hits = tfidf_cosine_hits(history_texts, prompt, SIM_HITS)
+    evidence = []
+    for _, t in hits[:EVIDENCE_MAX]:
+        t_clean = " ".join(t.split())
+        if len(t_clean) > 160:
+            t_clean = t_clean[:159] + "…"
+        evidence.append(t_clean)
+
+    themes = theme_keywords(history_texts)
+
+    if mode == "supportive":
+        questions = [
+            "What part of this hurts most right now?",
+            "What do you need most: clarity, rest, support, or respect?",
+        ]
+        action = "Name the feeling in 3 words, then do one calming action (water/walk/message)."
+        follow = "What would make the next 2 hours 5% easier?"
+    elif mode == "direct":
+        questions = [
+            "What decision are you avoiding?",
+            "What’s the smallest next action you can do in 10 minutes?",
+        ]
+        action = "Write the next action as a 10-minute task and do it now (timer on)."
+        follow = "What time today will you do the next 10 minutes?"
+    else:
+        questions = [
+            "What assumption are you treating as fact?",
+            "If that assumption is false, what changes immediately?",
+        ]
+        action = "Write the core assumption as one sentence; list 2 alternatives; pick a test today."
+        follow = "What’s one test you can run today to get evidence?"
+
+    pack = {
+        "user": user_name,
+        "prompt": prompt,
+        "mode": mode,
+        "loops": loops,
+        "evidence": evidence,
+        "theme_words": themes[:THEME_TERMS_MAX],
+        "questions": questions[:QUESTIONS_MAX],
+        "next_step_10min": action,
+        "follow_up": follow,
+        "low_context": (len(evidence) == 0 and len(themes) == 0),
+        "constraints": {
+            "plain_text_only": True,
+            "no_code": True,
+            "fixed_format": True,
+            "max_questions": 2
+        }
+    }
+    return pack
+
+
+def fallback_writer(pack: Dict) -> str:
+    lines = []
+    lines.append("Mirror:")
+    lines.append(pack["prompt"])
+    lines.append("")
+    lines.append("Pattern:")
+    if pack["loops"]:
+        lines.append("Likely loop(s): " + ", ".join(pack["loops"]))
+    else:
+        lines.append(f"Mode: {pack['mode']} (need more signal for loops).")
+    lines.append("")
+    lines.append("Evidence:")
+    if pack["evidence"]:
+        for e in pack["evidence"]:
+            lines.append(f"- “{e}”")
+    else:
+        lines.append("- (no close matches yet)")
+    lines.append("")
+    lines.append("2 Questions:")
+    lines.append(f"1) {pack['questions'][0]}")
+    lines.append(f"2) {pack['questions'][1]}")
+    lines.append("")
+    lines.append("Next step (10 min):")
+    lines.append(pack["next_step_10min"])
+    lines.append("")
+    lines.append("Follow-up:")
+    lines.append(pack["follow_up"])
+    return "\n".join(lines)
+
+
+def build_reply(user_name: str, prompt: str, history_texts: List[str]) -> Tuple[str, Dict]:
+    pack = build_pack(user_name, prompt, history_texts)
+
+    # If low context, force one clarifier behavior
+    if pack.get("low_context"):
+        pack["hint"] = "Low context: do not assume; ask 1 clarifying question if needed."
+
+    # LLM user payload (compact)
+    user_payload = (
+        "Use PACK to answer. Do not repeat PACK. "
+        "Follow the exact output format. Start with 'Mirror:'.\n"
+    )
+    pack_for_llm = pack.copy()
+    pack_for_llm["user_payload"] = user_payload
+
+    txt = llm_reply(pack_for_llm)
+    if txt:
+        return txt, {"writer": "llm", "mode": pack["mode"], "loops": pack["loops"]}
+
+    return fallback_writer(pack), {"writer": "fallback", "mode": pack["mode"], "loops": pack["loops"]}
+
+
+# =========================
+# UI
+# =========================
+HTML = r"""
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCM Buddy Ultra</title>
+<style>
+:root{color-scheme:dark;}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#0b0f18;color:#e9eef8;}
+.wrap{max-width:980px;margin:0 auto;padding:14px 14px 92px;}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(20,24,36,.65);}
+.pill{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(14,18,30,.65);}
+.chat{margin-top:12px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);min-height:62vh;background:rgba(12,16,26,.55);}
+.b{max-width:90%;padding:12px 14px;border-radius:14px;margin:10px 0;white-space:pre-wrap;line-height:1.45;}
+.you{margin-left:auto;background:rgba(70,80,140,.35);border:1px solid rgba(160,170,255,.22);text-align:right;}
+.buddy{background:rgba(40,90,110,.35);border:1px solid rgba(120,220,255,.18);}
+.meta{font-size:12px;opacity:.75;margin-top:4px;}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(transparent, rgba(11,15,24,.95));}
+.row{max-width:980px;margin:0 auto;display:flex;gap:10px;}
+input{flex:1;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(14,18,30,.65);color:#e9eef8;outline:none;}
+button{padding:14px 16px;border-radius:12px;border:0;background:#2ee59d;color:#041014;font-weight:900;cursor:pointer;}
+.smallbtn{background:rgba(255,255,255,.10);color:#e9eef8;border:1px solid rgba(255,255,255,.14);}
+.toast{position:fixed;top:14px;right:14px;max-width:80vw;padding:10px 12px;border-radius:12px;background:rgba(20,24,36,.92);border:1px solid rgba(255,255,255,.12);opacity:0;transform:translateY(-8px);transition:.18s ease;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <b>PCM Buddy Ultra ✨</b>
+      <div style="font-size:12px;opacity:.8" id="hint"></div>
+    </div>
+    <div class="pill" id="pill">User: (none)</div>
+  </div>
+
+  <div style="font-size:12px;opacity:.75;margin-top:8px">
+    Modes: “I feel …” (supportive) • “I don’t know what to do …” (direct) • “Insight on …” (socratic)
+  </div>
+
+  <div class="chat" id="chat"></div>
+</div>
+
+<div class="bar">
+  <div class="row">
+    <button class="smallbtn" onclick="switchUser()">Switch</button>
+    <input id="inp" placeholder="Type here…" autocomplete="off" />
+    <button onclick="sendMsg()">Send</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2100);
+}
+
+function getUID(){ return localStorage.getItem("pcm_uid"); }
+function setUID(v){
+  if(v!==undefined && v!==null && v!==""){
+    localStorage.setItem("pcm_uid", String(v));
+  }
+}
+function clearUID(){ localStorage.removeItem("pcm_uid"); }
+
+function add(role, text, meta=""){
+  const c=document.getElementById('chat');
+  const b=document.createElement('div');
+  b.className='b ' + (role==='you'?'you':'buddy');
+  b.textContent=text;
+  c.appendChild(b);
+  if(meta){
+    const m=document.createElement('div');
+    m.className='meta';
+    m.textContent=meta;
+    c.appendChild(m);
+  }
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+async function api(path, payload){
+  payload = payload || {};
+  const uid = getUID();
+  if(uid) payload.uid = uid;
+
+  const base = window.location.origin;
+  let r;
+  try {
+    r = await fetch(base + path, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    toast("Network error: " + e);
+    return {reply:"⚠️ Can't reach server. Open http://<pi-ip>:8080", meta:"client network error"};
+  }
+
+  let data;
+  try {
+    data = await r.json();
+  } catch(e) {
+    toast("Bad JSON from server");
+    return {reply:"⚠️ Server returned bad JSON. Check server logs.", meta:"client json error"};
+  }
+
+  if(data && data.uid) setUID(data.uid);
+  if(data && data.user_label) document.getElementById('pill').textContent = data.user_label;
+  if(data && data.hint) document.getElementById('hint').textContent = data.hint;
+  return data;
+}
+
+async function boot(){
+  const d = await api('/boot', {});
+  document.getElementById('chat').innerHTML='';
+  add('buddy', d.first_msg || "Hi", d.meta || "");
+}
+
+function switchUser(){
+  clearUID();
+  toast("Switched user ✅");
+  boot();
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('inp');
+  const text=inp.value.trim();
+  if(!text) return;
+  inp.value='';
+  add('you', text);
+
+  const d = await api('/msg', {text});
+  if(d && d.reply) add('buddy', d.reply, d.meta || "");
+  else toast("No reply received.");
+}
+
+document.getElementById('inp').addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMsg(); });
+boot();
+</script>
+</body>
+</html>
+"""
+
+
+# =========================
+# Routes
+# =========================
+@app.get("/health")
+def health():
+    return "ok"
+
+
+@app.get("/")
+def home():
+    return render_template_string(HTML)
+
+
+@app.post("/boot")
+def boot():
+    data = request.get_json(silent=True) or {}
+    uid = data.get("uid")
+
+    model_path = os.environ.get("PCM_MODEL_PATH", "").strip()
+    llm_on = (LLM_AVAILABLE and bool(model_path) and os.path.exists(model_path))
+    hint = f"LLM writer: {'ON' if llm_on else 'OFF'} • ctx={PCM_N_CTX} • threads={PCM_N_THREADS}"
+
+    if uid:
+        try:
+            uid_int = int(uid)
+            u = get_user(uid_int)
+            if u:
+                touch_user(uid_int)
+                return jsonify(
+                    uid=uid_int,
+                    user_label=user_label(uid_int),
+                    first_msg=f"👋 Welcome back, {u['name_display']}. What’s on your mind?",
+                    hint=hint
+                )
+        except Exception:
+            pass
+
+    last = get_last_user()
+    guessed = str(last["name_display"]) if last else DEFAULT_PRIMARY_NAME
+    return jsonify(
+        uid=None,
+        user_label="User: (none)",
+        first_msg=f"👋 Are you {guessed}? (yes/no)",
+        hint=hint
+    )
+
+
+@app.post("/msg")
+def msg():
+    data = request.get_json(silent=True) or {}
+    text = str(data.get("text", "")).strip()
+    lower = text.lower()
+    uid = data.get("uid")
+
+    # ----- identity flow -----
+    if not uid:
+        last = get_last_user()
+        guessed = str(last["name_display"]) if last else DEFAULT_PRIMARY_NAME
+
+        if lower in ("yes", "y"):
+            uid2 = int(last["id"]) if last else get_or_create_user(DEFAULT_PRIMARY_NAME)
+            touch_user(uid2)
+            reply = "✨ Logged in. Tell me what’s on your mind."
+            add_message(uid2, "buddy", reply)
+            return jsonify(uid=uid2, user_label=user_label(uid2), reply=reply, meta="(ready)")
+
+        if lower in ("no", "n"):
+            return jsonify(uid=None, user_label="User: (none)",
+                           reply="Okay 😄 what should I call you? (type your name)",
+                           meta="(registration)")
+
+        if len(text) >= 2:
+            uid2 = get_or_create_user(text)
+            touch_user(uid2)
+            reply = f"✨ Welcome, {get_user(uid2)['name_display']}. What’s on your mind?"
+            add_message(uid2, "buddy", reply)
+            return jsonify(uid=uid2, user_label=user_label(uid2), reply=reply, meta="(registered)")
+
+        return jsonify(uid=None, user_label="User: (none)", reply=f"👋 Are you {guessed}? (yes/no)")
+
+    # ----- chat flow -----
+    try:
+        uid_int = int(uid)
+    except Exception:
+        return jsonify(uid=None, user_label="User: (none)", reply="Bad uid. Press Switch and identify again.")
+
+    u = get_user(uid_int)
+    if not u:
+        return jsonify(uid=None, user_label="User: (none)", reply="Unknown user. Press Switch and identify again.")
+
+    touch_user(uid_int)
+
+    # Fast path for greetings
+    if lower in ("hi", "hey", "hello", "yo") and len(text) <= 6:
+        reply = f"Hey {u['name_display']} 👋\nGive me the real thing in one sentence."
+        add_message(uid_int, "buddy", reply)
+        return jsonify(uid=uid_int, user_label=user_label(uid_int), reply=reply, meta="fast-path")
+
+    # Save user message
+    add_message(uid_int, "user", text)
+
+    # Build reply safely (NEVER silent)
+    history = load_user_texts(uid_int, HISTORY_LIMIT)
+
+    try:
+        reply, debug = build_reply(str(u["name_display"]), text, history)
+    except Exception as e:
+        print("PCM ERROR:", e)
+        reply = "⚠️ Internal error. Tell me in ONE sentence what’s going on."
+        debug = {"writer": "safety", "mode": "unknown", "loops": []}
+
+    add_message(uid_int, "buddy", reply)
+    meta = f"writer={debug.get('writer')} • mode={debug.get('mode')} • loops={','.join(debug.get('loops', []))}"
+    return jsonify(uid=uid_int, user_label=user_label(uid_int), reply=reply, meta=meta)
+
+
+if __name__ == "__main__":
+    ensure_schema()
+    app.run(host="0.0.0.0", port=APP_PORT)
