@@ -4,10 +4,7 @@ Practical AI, cloud, and product projects with clear setup notes, supporting doc
 
 ## Featured Project
 
-- [SAP Ariba Procurement Copilot](Projects/SAP%20ariba%20procurment%20copilot/README.md) - local-first SAP Ariba procurement assistant with a browser UI, policy-backed knowledge routing, MCP tooling, and safe simulated Ariba actions.
-
-## Other Projects
-
+- SAP Ariba Procurement Copilot
 - AI Powered Fitness Ecosystem
 - Cloud-Based Pneumonia Detection
 - Multi-Task Learning for AI Job Insights
