@@ -1,0 +1,30 @@
+[
+  {
+    "id": "s4hana_procurement_requisition",
+    "title": "SAP S/4HANA Procurement - Requisition and Procurement Processes",
+    "url": "https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/af9ef57f504840d2b81be8667206d485/8d7db65334e6b54ce10000000a174cb4.html",
+    "tags": ["requisition", "procurement", "s4hana", "purchase requisition"],
+    "summary": "Official SAP S/4HANA guidance for procurement and requisition processes. Provides details on requisition generation, approval flows, and integration points useful for automation and mapping to Ariba workflows.",
+    "content": "See the SAP Help Portal topic for procurement and requisition flows in SAP S/4HANA. This document covers how requisitions are created, processed, and integrated with downstream procurement systems.",
+    "confidence": "Reference"
+  },
+  {
+    "id": "ariba_glossary",
+    "title": "SAP Ariba Glossary",
+    "url": "https://help.sap.com/docs/ariba/ariba-glossary/sap-ariba-glossary",
+    "tags": ["ariba", "glossary", "terms", "buyer", "registration"],
+    "summary": "SAP Ariba glossary of terms and definitions. Useful as a reference for Ariba-specific concepts such as buyers, suppliers, catalogs, and common UI terminology.",
+    "content": "SAP Ariba glossary entries provide definitions and usage notes for Ariba concepts which help map user questions to the correct Ariba operational term.",
+    "confidence": "Reference"
+  }
+  ,
+  {
+    "id": "sap_tcodes",
+    "title": "SAP Supply Chain & Procurement T-Codes (Reference)",
+    "url": "",
+    "tags": ["tcode", "tcodes", "ME51N", "ME21N", "MIGO", "vendor", "XK01", "procurement"],
+    "summary": "Common SAP transaction codes (T-Codes) used across Procurement, Vendor Master, Warehouse and Logistics. Useful as a local quick-reference for mapping user 'shortcuts' to the canonical SAP transaction.",
+    "content": "ME51N – Create Purchase Requisition\nME52N – Change Purchase Requisition\nME53N – Display Purchase Requisition\nME21N – Create Purchase Order\nME22N – Change Purchase Order\nME23N – Display Purchase Order\nME41 – Create Request for Quotation (RFQ)\nME47 – Maintain Quotation\nME49 – Compare Quotations\nME11 – Create Info Record\nME01 – Maintain Source List\nXK01 – Create Vendor\nXK02 – Change Vendor\nXK03 – Display Vendor\nLT01 – Create Transfer Order\nLT10 – Create TO for Transfer Requirement\nLT21 – Confirm Transfer Order\nLX01 – Inventory Count\nMIGO – Goods Movement\nMB51 – Material Document List\nMB52 – Stock Overview by Storage Location\nVL01N – Create Outbound Delivery\nVL02N – Change Outbound Delivery\nVL03N – Display Outbound Delivery\nMD01 – Create MRP Run\nMD04 – Display Stock/Requirement List\nME2N – PO List by PO Number\nME80FN – General Analysis of Purchasing Documents\nSE16N – Table View\nSUIM – User Authorization Info\nST22 – Dump Analysis\nSM37 – Job Monitoring\n",
+    "confidence": "LocalReference"
+  }
+]

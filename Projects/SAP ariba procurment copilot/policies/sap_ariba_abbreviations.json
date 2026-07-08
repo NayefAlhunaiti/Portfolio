@@ -1,0 +1,158 @@
+[
+  {
+    "id": "abbrev_po",
+    "title": "PO - Purchase Order",
+    "tags": ["po", "purchase order", "order", "ariba buying", "procurement"],
+    "summary": "PO means Purchase Order. In SAP Ariba, a PO is the commercial document sent to a supplier after an approved buying flow, catalog checkout, contract compliance order, or ERP-integrated purchase order process.",
+    "key_risks": [
+      "Do not confuse a PO with a PR or requisition",
+      "PO creation and dispatch can depend on ERP integration, supplier relationship, and approval status"
+    ],
+    "recommended_next_step": "If the user asks to display or change a PO in SAP GUI/S/4HANA, use the relevant SAP transaction code; if they ask about Ariba workflow status, check the Ariba buying or network document flow.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_pr",
+    "title": "PR - Purchase Requisition",
+    "tags": ["pr", "req", "purchase requisition", "purchase request", "requisition"],
+    "summary": "PR means Purchase Requisition or purchase request. It is the internal request that normally goes through budget, policy, and approval checks before a purchase order is created.",
+    "key_risks": [
+      "Do not confuse a PR with a PO",
+      "Approval, budget, and external validation rules vary by tenant and ERP integration"
+    ],
+    "recommended_next_step": "Use requisition-specific guidance for Ariba approval/status questions, or SAP T-code guidance for SAP GUI/S/4HANA create/change/display tasks.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_rfq",
+    "title": "RFQ - Request for Quotation",
+    "tags": ["rfq", "request for quotation", "quote request", "quotation", "supplier quote", "sourcing"],
+    "summary": "RFQ means Request for Quotation. In SAP Ariba sourcing, it is a sourcing event pattern used to request pricing or commercial quotes from suppliers.",
+    "key_risks": [
+      "SAP GUI RFQ transaction codes are not the same thing as SAP Ariba sourcing event screens",
+      "Event templates, bidding rules, and supplier visibility depend on tenant configuration"
+    ],
+    "recommended_next_step": "For Ariba, use sourcing-event guidance; for SAP GUI/S/4HANA RFQ creation or maintenance, use SAP transaction-code guidance.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_rfx",
+    "title": "RFX - RFI, RFP, or RFQ Sourcing Event",
+    "tags": ["rfx", "rfi", "rfp", "rfq", "request for information", "request for proposal", "request for quotation", "sourcing event"],
+    "summary": "RFX is a general sourcing term covering RFI, RFP, and RFQ event types. In SAP Ariba, it usually points to sourcing event setup, supplier participation, bidding, or award workflows.",
+    "key_risks": [
+      "RFI, RFP, and RFQ have different commercial intent",
+      "Auction rules, sealed bids, scoring, and pre-bids must follow the event template"
+    ],
+    "recommended_next_step": "Clarify whether the request is about RFI, RFP, RFQ, auction, event setup, supplier response, or award.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_cig",
+    "title": "CIG - Cloud Integration Gateway / Managed Gateway",
+    "tags": ["cig", "cloud integration gateway", "managed gateway", "integration", "cxml", "erp", "s4hana"],
+    "summary": "CIG commonly means SAP Ariba Cloud Integration Gateway, now often referred to as Managed Gateway for Spend Management and SAP Business Network. It handles integration between SAP ERP/S/4HANA and SAP Ariba/SAP Business Network.",
+    "key_risks": [
+      "CIG issues often need message IDs, payload direction, endpoint, credentials, and exact HTTP/cXML status",
+      "Do not treat CIG errors as generic buying workflow errors"
+    ],
+    "recommended_next_step": "For CIG/cXML errors, collect the payload type, HTTP status, document type, timestamp, and whether the failure is ERP-to-Ariba or Ariba-to-ERP.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_cxml",
+    "title": "cXML - Commerce XML",
+    "tags": ["cxml", "commerce xml", "punchout", "catalog", "purchase order", "invoice", "integration"],
+    "summary": "cXML means Commerce XML. SAP Ariba uses cXML for PunchOut, purchase order, invoice, and network integration messages.",
+    "key_risks": [
+      "HTTP status alone is not enough; the cXML response body and document type matter",
+      "PunchOut cXML and PO/invoice cXML failures require different troubleshooting paths"
+    ],
+    "recommended_next_step": "Identify the cXML document type, status code, payload direction, and supplier/network relationship before suggesting a fix.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_slp",
+    "title": "SLP - Supplier Lifecycle and Performance",
+    "tags": ["slp", "supplier lifecycle performance", "supplier lifecycle and performance", "supplier management", "supplier onboarding", "qualification"],
+    "summary": "SLP means Supplier Lifecycle and Performance. In SAP Ariba, it covers supplier registration, onboarding, qualification, segmentation, performance, and lifecycle governance.",
+    "key_risks": [
+      "SLP availability depends on licensing and tenant configuration",
+      "Supplier status and qualification rules vary by organization"
+    ],
+    "recommended_next_step": "Clarify whether the request is about supplier registration, questionnaire, qualification, approval status, or performance monitoring.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_asn",
+    "title": "ASN - Advanced Shipping Notice",
+    "tags": ["asn", "advanced shipping notice", "advance ship notice", "shipping notice", "sap business network", "ariba network"],
+    "summary": "ASN means Advanced Shipping Notice. In SAP Business Network or Ariba Network scenarios, it is a supplier shipping notification tied to fulfillment and receiving visibility.",
+    "key_risks": [
+      "ASN support depends on the buyer-supplier network relationship and enabled document types",
+      "ASN is different from goods receipt"
+    ],
+    "recommended_next_step": "Check whether the supplier relationship supports ASN, then compare the ASN against the PO, shipment, and receiving status.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_ses",
+    "title": "SES - Service Entry Sheet",
+    "tags": ["ses", "service entry sheet", "service sheet", "service po", "approval"],
+    "summary": "SES means Service Entry Sheet. It records service acceptance against a service purchase order and may require approval before invoicing or payment can proceed.",
+    "key_risks": [
+      "Service sheet behavior differs from material goods receipt",
+      "Approval and invoice matching depend on service PO and ERP integration settings"
+    ],
+    "recommended_next_step": "Confirm whether the issue is service sheet creation, approval, acceptance, or invoice matching.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_gr",
+    "title": "GR - Goods Receipt",
+    "tags": ["gr", "goods receipt", "receiving", "receipt", "po receiving"],
+    "summary": "GR means Goods Receipt. It records received goods against a purchase order and is commonly part of three-way matching with PO and invoice.",
+    "key_risks": [
+      "GR is not the same as ASN or service entry sheet",
+      "Receiving may happen in SAP ERP/S/4HANA or through an integrated Ariba/SAP Business Network flow"
+    ],
+    "recommended_next_step": "Clarify whether the user needs SAP transaction guidance, Ariba receiving workflow guidance, or invoice-match troubleshooting.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_sbn",
+    "title": "SBN - SAP Business Network",
+    "tags": ["sbn", "sap business network", "ariba network", "supplier network", "network"],
+    "summary": "SBN means SAP Business Network, the network layer that includes the supplier collaboration capabilities historically associated with Ariba Network.",
+    "key_risks": [
+      "Some customers and suppliers still say Ariba Network",
+      "Network features depend on account type, buyer relationship, and enabled document types"
+    ],
+    "recommended_next_step": "Clarify whether the user is asking about buyer-side Ariba, supplier-side network access, trading relationships, or document exchange.",
+    "confidence": "High",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  },
+  {
+    "id": "abbrev_cro",
+    "title": "CRO - Tenant-Specific Procurement Acronym",
+    "tags": ["cro", "contract request", "change request", "customer relationship owner", "tenant acronym"],
+    "summary": "CRO is not a universal SAP Ariba abbreviation. It can be tenant-specific, so the chatbot should not invent a meaning without context.",
+    "key_risks": [
+      "CRO can mean different things across companies or modules",
+      "Assuming one meaning can route the user to the wrong workflow"
+    ],
+    "recommended_next_step": "Ask whether CRO refers to a contract request, change request/order, customer relationship owner, or another local term, then route based on that clarified module.",
+    "confidence": "Medium",
+    "policy_references": ["SAP Ariba abbreviation dictionary"]
+  }
+]

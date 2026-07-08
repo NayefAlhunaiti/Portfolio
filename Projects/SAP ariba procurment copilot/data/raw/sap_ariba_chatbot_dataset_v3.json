@@ -1,0 +1,536 @@
+{
+  "metadata": {
+    "purpose": "Consolidated, source-tagged dataset for grounding an SAP Ariba support chatbot. Covers three layers deliberately: (1) simple/basic FAQ-level entries (passwords, browsers, basic definitions) so the bot doesn't only sound smart on hard problems, (2) mid-complexity confirmed bug reports (including real, dated mobile-app changelog bug fixes), and (3) the complex/deep procedural and integration-level knowledge from earlier passes.",
+    "counts": {
+      "basic_and_mobile_entries_this_pass": 16,
+      "problem_solution_entries_from_v2": 28,
+      "procedural_knowledge_entries_from_v2": 10,
+      "grand_total": 54
+    },
+    "confidence_tiers_explained": {
+      "official_sap_kba": "Directly sourced from a numbered SAP Knowledge Base Article. Highest reliability. KBA previews are login-gated on SAP for Me -- cite the KBA number to the user rather than claiming to quote its full text verbatim.",
+      "official_sap_employee_confirmed": "A community thread where an identified SAP employee confirmed the root cause. High reliability; confirm it hasn't since been patched.",
+      "official_sap_community_verified": "A blog post authored by SAP staff on SAP Community documenting official configuration steps. High reliability.",
+      "community_verified": "A solved/answered thread on SAP Community. Generally reliable but reflects one environment; validate against your own realm/version.",
+      "community_verified_recent": "Same as above but 2025-2026 content on actively-changing features (e.g., Joule) -- treat as current-best-known-fix, not permanent.",
+      "third_party_practitioner_blog": "Written by a named practitioner/consultant with real project experience but not SAP-official. Good for likely-root-cause hints; verify before treating as authoritative.",
+      "SAP Press / SAP Learning course content": "Official-adjacent educational material (published training content); reliable for how-things-work procedural knowledge, though can lag the very latest UI changes.",
+      "official_vendor_faq": "A FAQ document published by a buyer organization or Ariba itself for their suppliers -- reliable for standard, stable processes (password reset flows, etc.) that rarely change.",
+      "official_vendor_changelog": "Pulled directly from SAP's own official app store release notes / changelog entries -- these are SAP's own bug-fix announcements, so treat the 'fixed in version X' claims as authoritative for that version, but always check the user is on a current build since older unpatched versions may still show the bug.",
+      "official_vendor_guide": "A structured guide published by a buyer organization based on Ariba's own documentation, covering account administration mechanics (ANID consolidation, DUNS requirements, etc.) that are stable, low-churn facts.",
+      "official_sap_learning": "SAP's own official Learning/training platform content -- reliable for how-things-work facts, occasionally slightly behind the very latest UI."
+    },
+    "design_intent_for_chatbot": "Include BOTH trivial ('I forgot my password') and complex (CIG header bugs, SAML federation edge cases) entries in the same retrieval index. A well-grounded chatbot needs to resolve the 80% of tickets that are mundane just as reliably as the 20% that are exotic -- don't let the dataset skew toward only impressive-sounding technical content, since that's not what most real users will actually ask.",
+    "still_not_literally_everything": "This remains a curated seed corpus (now ~55+ entries total across all three files), not an exhaustive corpus. The single highest-leverage remaining gaps are: (a) full-text SAP KBAs behind the S-user login wall (I can only see titles/tag summaries via search), and (b) your own organization's historical ticket data. Both would multiply this dataset's real-world coverage far more than additional public web search passes at this point -- diminishing returns are setting in on this channel."
+  },
+  "basic_and_mobile_entries": [
+    {
+      "id": "BASIC-001",
+      "category": "login_account",
+      "question": "I forgot my SAP Ariba / Ariba Network password, how do I reset it?",
+      "answer": "Go to the login page (supplier.ariba.com for suppliers) and click 'Forgot Password' (not 'Forgot Username'). Enter the email address registered to your account and submit. Ariba emails a password-reset link to that address; click it, set a new password, and confirm. If you don't receive the email within a few minutes, check your spam/junk folder first.",
+      "confidence": "official_vendor_faq",
+      "source_type": "Buyer-published supplier FAQ (multiple corroborating sources)",
+      "source_url": "https://sepro.freshdesk.com/support/solutions/articles/44002138914-how-to-reset-password-"
+    },
+    {
+      "id": "BASIC-002",
+      "category": "login_account",
+      "question": "I reset my password but the reset email never arrived.",
+      "answer": "Common causes: it's been 24+ hours since the request (links expire -- request a fresh one); you already used that specific reset link once (links are single-use); your account has a typo'd or outdated email address on file; or the email landed in spam. If none of these apply, contact Ariba Customer Support directly via the Help Center.",
+      "confidence": "official_vendor_faq",
+      "source_type": "Buyer-published supplier FAQ",
+      "source_url": "https://www.interpublic.com/wp-content/uploads/2022/04/IPGSupplierRegistrationFAQs.pdf"
+    },
+    {
+      "id": "BASIC-003",
+      "category": "login_account",
+      "question": "My Ariba account got locked after entering the wrong password too many times.",
+      "answer": "Ariba enforces a limited number of password attempts before locking the account as a security measure. The account typically unlocks automatically after a set waiting period (commonly around 30 minutes), or you can use the password-reset flow to regain access sooner. If it's still locked afterward, contact your company's Ariba administrator or Ariba Customer Support.",
+      "confidence": "official_vendor_faq",
+      "source_type": "Vendor/practitioner guide (multiple corroborating sources)",
+      "source_url": "https://www.erpvits.com/blog/ariba-supplier-login/"
+    },
+    {
+      "id": "BASIC-004",
+      "category": "login_account",
+      "question": "Which web browsers does SAP Ariba actually support?",
+      "answer": "As of the most recent published technical requirements, supported browsers are recent versions of Google Chrome, Microsoft Edge, Mozilla Firefox, and Apple Safari (including Mobile Safari on iPad) -- specific minimum version numbers are updated periodically (e.g., Chrome 88+, Edge 88+, Firefox 87+, Safari 15+ as of a 2024 snapshot). Microsoft Internet Explorer has NOT been supported since December 31, 2021 -- no bug fixes or new features are guaranteed to work in it. Browsers on mobile devices (phones) don't render the newest visual design of Ariba solutions correctly; use the dedicated mobile app instead for phone-based access.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3171972 + SAP Help Portal technical requirements",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3171972"
+    },
+    {
+      "id": "BASIC-005",
+      "category": "login_account",
+      "question": "I have multiple SAP Business Network / Ariba accounts (ANIDs) for the same company and it's confusing to manage.",
+      "answer": "You cannot merge accounts once created, but you have three consolidation options: (1) Complete consolidation -- pick one ANID to keep, ask all buyers connected to the other ANIDs to re-establish the relationship with the surviving account, then let the old ANIDs expire (note: this can disrupt in-progress Sourcing Events tied to the old accounts). (2) Account hierarchy -- link the accounts together with one parent and the others as children, keeping all accounts open. (3) Linked user IDs -- if the real problem is just remembering multiple usernames/passwords as an individual user, you can link user IDs to seamlessly switch between accounts after one login, without touching the underlying company-level ANIDs at all.",
+      "confidence": "official_vendor_guide",
+      "source_type": "Buyer-published supplier registration/login guide",
+      "source_url": "https://www.alcoa.com/global/en/contact/supplier/north-america/pdfs/SAP-Ariba-Registration-Guide-Login-Troubleshooting-English.pdf"
+    },
+    {
+      "id": "BASIC-006",
+      "category": "login_account",
+      "question": "What is an ANID and do I need a DUNS number to use SAP Ariba?",
+      "answer": "An ANID (SAP Business Network / Ariba Network ID) is the unique account identifier for your company on the network. A DUNS number (a 9-digit Dun & Bradstreet business identifier) is NOT required to register for or use Ariba -- however, a specific customer/buyer may require you to provide one in their Supplier Registration Questionnaire or Customer Requested Profile as part of their own vetting process.",
+      "confidence": "official_vendor_guide",
+      "source_type": "Buyer-published supplier registration guide",
+      "source_url": "https://www.alcoa.com/global/en/contact/supplier/north-america/pdfs/SAP-Ariba-Registration-Guide-Login-Troubleshooting-English.pdf"
+    },
+    {
+      "id": "BASIC-007",
+      "category": "login_account",
+      "question": "My username looks like an email address but isn't a real one Ariba can send mail to -- is that allowed?",
+      "answer": "Yes. SAP Ariba requires usernames to be FORMATTED like an email address, but the username does not have to be a real, deliverable email address. Notification emails still go to whatever separate 'email address' field is on file for the account, which can be different from the username itself.",
+      "confidence": "official_vendor_guide",
+      "source_type": "Buyer-published supplier registration guide",
+      "source_url": "https://www.alcoa.com/global/en/contact/supplier/north-america/pdfs/SAP-Ariba-Registration-Guide-Login-Troubleshooting-English.pdf"
+    },
+    {
+      "id": "MOBILE-001",
+      "category": "mobile_app",
+      "question": "I can't sign in to the SAP Ariba Procurement mobile app even though 'bypass Ariba Mobile User group membership check' is enabled for me.",
+      "answer": "This was a confirmed bug in a past app version where that specific bypass setting did not work as intended, and has since been fixed in a later release. If you still see this, make sure your app is updated to the latest version; if the problem persists on a current version, it is likely a different, unrelated cause and should be reported fresh.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes (Apple App Store)",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "MOBILE-002",
+      "category": "mobile_app",
+      "question": "The approval flow graph/diagram isn't fully displayed in the mobile app when trying to approve a requisition.",
+      "answer": "This was a confirmed display bug in a past mobile app version (approval flow graph not rendering completely, and separately, a version where the 'Approval Flow' section didn't display at all for some approvers) and has since been fixed in later releases per the app's own changelog. Update to the current app version if you still see this.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "MOBILE-003",
+      "category": "mobile_app",
+      "question": "Push notifications aren't arriving in the SAP Ariba Procurement mobile app.",
+      "answer": "This was a confirmed and since-fixed bug per the app's official release notes. Confirm you're on the latest app version and that notification permissions are enabled for the app at the OS level; if still not working on a current version, that points to a device/OS-level notification setting rather than the historical app bug.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "MOBILE-004",
+      "category": "mobile_app",
+      "question": "Can't add BMEcat catalog items to the cart in the mobile app.",
+      "answer": "This was a confirmed bug in a past mobile app version, since fixed. A later release also explicitly added support for ordering BMEcat and Excel catalog items in the mobile app, so ensure you're on a current version.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "MOBILE-005",
+      "category": "mobile_app",
+      "question": "'On Behalf Of' shopping in the mobile app shows the wrong catalog items for the chosen user.",
+      "answer": "This was a confirmed bug (catalog items not displaying accurately for the selected 'shop on behalf of' user) that has since been fixed per the app's official changelog. Also separately, a related issue where shopping on behalf of another user caused an error was fixed in a subsequent release.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "MOBILE-006",
+      "category": "mobile_app",
+      "question": "Project or WBS (Work Breakdown Structure) value disappears after clicking 'Apply Changes' on a mobile requisition.",
+      "answer": "This was a confirmed and since-fixed bug per the app's official release notes. If it recurs, re-enter the value and avoid navigating away before confirming the change saved, and report it as a fresh regression since it was previously resolved.",
+      "confidence": "official_vendor_changelog",
+      "source_type": "SAP Ariba Procurement app official release notes",
+      "source_url": "https://apps.apple.com/us/app/sap-ariba-procurement/id1451570638"
+    },
+    {
+      "id": "BASIC-008",
+      "category": "contract_authoring_basic",
+      "question": "What's the maximum file size I can upload to a Contract Workspace?",
+      "answer": "The maximum size for an individual file uploaded into a Contract Workspace project is 100 megabytes (MB).",
+      "confidence": "official_sap_learning",
+      "source_type": "SAP Learning course content",
+      "source_url": "https://learning.sap.com/courses/contract-workspace-creation/working-with-contract-documents"
+    },
+    {
+      "id": "BASIC-009",
+      "category": "sourcing_basic",
+      "question": "What's the difference between an RFI, an RFP, and an auction in SAP Ariba Sourcing?",
+      "answer": "RFI (Request for Information) collects supplier capability information and generally does NOT collect pricing. RFP (Request for Proposal) collects both supplier information and price bids, where price may not be the deciding factor in the award. Auctions are used specifically to purchase (reverse auction) or sell (forward auction) goods/services where price is the primary factor, and involve real-time competitive bidding.",
+      "confidence": "official_sap_learning",
+      "source_type": "SAP Learning course content",
+      "source_url": "https://learning.sap.com/learning-journeys/introducing-projects-within-sap-ariba-sourcing/introducing-events-within-sap-ariba"
+    },
+    {
+      "id": "BASIC-010",
+      "category": "invoicing_basic",
+      "question": "What's the difference between a PO-based invoice and a contract-based invoice in Ariba?",
+      "answer": "A PO-based invoice is submitted by the supplier against an existing purchase order and is reconciled against that PO's line items. A contract-based invoice is submitted directly against an existing contract rather than a PO -- the supplier selects the contract, enters invoice details, and specifies the requester (who may default from the contract's contact person) rather than referencing a PO number.",
+      "confidence": "official_vendor_documentation",
+      "source_type": "Ariba Network invoicing guide (official supplier-facing PDF)",
+      "source_url": "https://www.syngenta.com/sites/default/files/company/suppliers/AN-Invoicing-Guide.pdf"
+    }
+  ],
+  "problem_solution_entries": [
+    {
+      "id": "PUNCHOUT-001",
+      "category": "punchout_catalog",
+      "question": "Supplier gets an error trying to load/upload their punchout catalog to Ariba Network for the first time.",
+      "root_cause": "Supplier onboarding on the Ariba Network side is not fully complete internally, even though the supplier has an enterprise account and a trading relationship established with the buyer.",
+      "resolution": "Confirm with the buyer's Ariba Customer Engagement Executive (CEE) that Ariba's own catalog onboarding team has completed their internal onboarding process before the supplier retries the catalog upload.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "LinkedIn (practitioner article)",
+      "source_url": "https://www.linkedin.com/pulse/sap-ariba-punchout-challenges-resolution-debadatta-dash"
+    },
+    {
+      "id": "PUNCHOUT-002",
+      "category": "punchout_catalog",
+      "question": "Punchout catalog uploaded successfully by the supplier, but the catalog never shows up as available/active on the buyer side (parent-child realm setup).",
+      "root_cause": "In a parent-child Ariba realm configuration, catalog loading happens in the parent but ordering happens in the child; the catalog can show Activated in the parent yet be missing in the child. A specific 'catalog' shared secret is often the culprit.",
+      "resolution": "Raise a high-priority request with SAP Ariba support to reset the catalog-specific shared secret; do not attempt to reset it yourself.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "LinkedIn (practitioner article)",
+      "source_url": "https://www.linkedin.com/pulse/sap-ariba-punchout-challenges-resolution-debadatta-dash"
+    },
+    {
+      "id": "PUNCHOUT-003",
+      "category": "punchout_catalog",
+      "question": "Clicking 'Buy from Supplier' throws 'Unable to connect to PunchOut Catalog' instead of opening the supplier's site.",
+      "root_cause": "Connectivity/configuration issue between the Ariba P2P portal and the supplier's punchout site (commonly URL, shared secret, or session config mismatch).",
+      "resolution": "Check the specific Ariba help center troubleshooting article for this exact error message; validate the punchout URL and shared secret configuration on both sides.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "LinkedIn (practitioner article)",
+      "source_url": "https://www.linkedin.com/pulse/sap-ariba-punchout-challenges-resolution-debadatta-dash"
+    },
+    {
+      "id": "PUNCHOUT-004",
+      "category": "punchout_catalog",
+      "question": "Error occurs when returning from the supplier's punchout site back into the requisition (cart transfer fails or line items are wrong).",
+      "root_cause": "The most common cause is incorrect data returned in the punchout order message (POOM) -- commodity code, unit of measure, or other required fields not matching what Ariba expects.",
+      "resolution": "Verify with the supplier's IT team that commodity code, UoM, and other required fields are populated correctly in the returned cXML POOM per the cXML reference guide.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "LinkedIn (practitioner article)",
+      "source_url": "https://www.linkedin.com/pulse/sap-ariba-punchout-challenges-resolution-debadatta-dash"
+    },
+    {
+      "id": "PUNCHOUT-005",
+      "category": "punchout_catalog",
+      "question": "Punchout requisition for a new supplier gets stuck in 'Ordering' status and never converts to a PO.",
+      "root_cause": "Commonly caused by extra/unexpected data returned from the supplier's checkout that Ariba doesn't know how to process into an order.",
+      "resolution": "Compare the exact returned cXML PunchOutOrderMessage against the buyer's expected schema; strip or correct any extraneous fields the supplier is sending.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "LinkedIn (practitioner article)",
+      "source_url": "https://www.linkedin.com/pulse/sap-ariba-punchout-challenges-resolution-debadatta-dash"
+    },
+    {
+      "id": "PUNCHOUT-006",
+      "category": "punchout_catalog",
+      "question": "Supplier's punchout store returns HTTP 403 Unauthorized to Ariba's PunchOutSetupRequest even though credentials look correct.",
+      "root_cause": "A CDN/WAF (e.g., Cloudflare) in front of the supplier's storefront is blocking Ariba's non-standard User-Agent string ('Ariba Buyer x.x') as part of default bot/security protection.",
+      "resolution": "Whitelist Ariba's specific User-Agent string in the CDN/WAF firewall rules so PunchOutSetupRequest calls are not blocked before they reach the application.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "Technical/agency blog (real integration case)",
+      "source_url": "https://www.develodesign.co.uk/learn/fixing-punchout-integration-with-magento-2-and-sap-ariba-issues"
+    },
+    {
+      "id": "PUNCHOUT-007",
+      "category": "punchout_catalog",
+      "question": "Punchout session opens the supplier's storefront but the buyer appears logged out / cart or pricing does not persist inside the iframe.",
+      "root_cause": "Modern browsers default session/auth cookies to SameSite=Lax, which blocks them from being sent inside a cross-origin iframe (how punchout storefronts are embedded); the session can't associate the cart with the buyer's identity.",
+      "resolution": "Explicitly set SameSite=None and the Secure flag on every session/auth cookie used during the punchout flow so cross-origin iframe requests carry the cookie correctly.",
+      "confidence": "third_party_practitioner_blog",
+      "source_type": "Technical/vendor blog",
+      "source_url": "https://punchoutrocket.com/sap-ariba-iframe-error/"
+    },
+    {
+      "id": "PUNCHOUT-008",
+      "category": "punchout_catalog",
+      "question": "User clicks 'Return to Requisition' from the supplier's punchout site and gets a generic 'Server Error: PunchOut Exception' / a page instructing to delete cookies.",
+      "root_cause": "Malformed or mismatched cXML in the PunchOutSetupRequest/Response round trip (credential domain, shared secret, or buyer cookie mismatch) causing the return leg of the session to fail.",
+      "resolution": "Capture and inspect the actual cXML PunchOutSetupRequest/Response payloads to confirm credentials, BuyerCookie, and Identity values match exactly what the receiving side expects.",
+      "confidence": "community_verified",
+      "source_type": "SAP Community Q&A",
+      "source_url": "https://answers.sap.com/questions/12771859/server-error-punchout-exception.html"
+    },
+    {
+      "id": "INTEG-001",
+      "category": "integration_cig",
+      "question": "cXML purchase orders WITH an attachment (PDF) fail with HTTP 500 Internal Server Error at CIG, while POs without attachments process fine.",
+      "root_cause": "Confirmed by SAP: a disallowed Tab character was being inserted into the Content-Type HTTP header immediately before the word 'boundary' when Ariba CIG formed the multipart HTTP request to CPI.",
+      "resolution": "Acknowledged by SAP as a CIG-side bug and routed for a fix; reference this known root cause when opening a support ticket for this exact symptom pattern.",
+      "confidence": "official_sap_employee_confirmed",
+      "source_type": "SAP Community Q&A (confirmed by SAP staff)",
+      "source_url": "https://community.sap.com/t5/spend-management-q-a/ariba-cxml-purchase-orders-with-attachment-throws-500-internal-server-error/qaq-p/12513755"
+    },
+    {
+      "id": "INTEG-002",
+      "category": "integration_network",
+      "question": "cXML transaction fails with HTTP 403 Forbidden and message 'No relationship with Supplier, name:xxx ANId:AN0200...'.",
+      "root_cause": "There is no active/established trading relationship between the buyer and the specific supplier ANID referenced in the cXML document.",
+      "resolution": "Verify the trading relationship status for that exact ANID in Ariba Network Administration; if unresolved, open a support ticket referencing the ANERR error reference number in the error message.",
+      "confidence": "community_verified",
+      "source_type": "Archived Ariba Exchange message board",
+      "source_url": "https://coenactor27.rssing.com/chan-14317586/all_p66.html"
+    },
+    {
+      "id": "INTEG-003",
+      "category": "integration_erp",
+      "question": "SM59 or SOAMANAGER connection test from SAP ERP/S4HANA to the managed gateway (CIG) / Ariba endpoint returns HTTP 500 Internal Server Error.",
+      "root_cause": "Documented known connectivity/configuration failure pattern between SAP backend connection-test tools and managed gateway endpoints.",
+      "resolution": "Reference SAP Knowledge Base Article 3183198 directly for the documented cause and fix.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3183198",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3183198"
+    },
+    {
+      "id": "INTEG-004",
+      "category": "integration_erp_receiving",
+      "question": "Receiving HTTP 500 Internal Server Error specifically when connecting to Ariba from the ERP side (receiving flow).",
+      "root_cause": "Documented known issue pattern specific to the receiving/purchasing integration flow.",
+      "resolution": "Reference SAP Knowledge Base Article 3176314 directly for the documented cause and fix.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3176314",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3176314"
+    },
+    {
+      "id": "INTEG-005",
+      "category": "integration_attachments",
+      "question": "Purchaser uploads an attachment to a requisition/document and gets 'The given url http://... is not valid'.",
+      "root_cause": "Attachment storage/URL-generation misconfiguration when the document reference path is malformed or points somewhere the application can't resolve.",
+      "resolution": "See the SAP Community thread for this exact error message and check the attachment storage/URL configuration on the affected document type.",
+      "confidence": "community_verified",
+      "source_type": "SAP Community Q&A",
+      "source_url": "https://community.sap.com/t5/spend-management-q-a/error-when-upload-attachment/qaq-p/2958681"
+    },
+    {
+      "id": "REQ-001",
+      "category": "requisition_lifecycle",
+      "question": "A purchase requisition is stuck in 'Approved' status because of an external budget check connection error, retrying daily with no way to revert to Composing.",
+      "root_cause": "A budget-check integration call to the external ERP/budget system is failing/timing out repeatedly; Ariba's default retry behavior doesn't auto-revert the requisition to editable.",
+      "resolution": "Reference SAP Knowledge Base Article 3213966 for the documented manual-reset steps.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3213966",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3213966"
+    },
+    {
+      "id": "REQ-002",
+      "category": "requisition_lifecycle",
+      "question": "A purchase requisition is stuck in 'Approved' and its linked PO cannot be canceled even though the Cancel button is visible/clickable.",
+      "root_cause": "Documented defect/edge case where requisition and PO cancellation states desync.",
+      "resolution": "Reference SAP Knowledge Base Article 3689418 for the documented resolution steps.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3689418",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3689418"
+    },
+    {
+      "id": "REQ-003",
+      "category": "requisition_lifecycle",
+      "question": "A requisition gets stuck in 'Canceling' after its latest version was withdrawn and then deleted/undone, with linked POs already Canceled.",
+      "root_cause": "The previous requisition version fails to revert to 'Ordered' under this exact sequence of operations.",
+      "resolution": "Reference SAP Knowledge Base Article 3534546 for the documented fix.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3534546",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3534546"
+    },
+    {
+      "id": "APPR-001",
+      "category": "approval_flow",
+      "question": "Approval flow producing unexpected results -- wrong node conditions, unexpected users added, too many/too few approvers, or field mismatches.",
+      "root_cause": "Standard categories of approval-flow misbehavior: rule/node condition mismatches, unexpected ad-hoc/rule-triggered approver additions, document data not matching flow field references.",
+      "resolution": "Reference SAP Knowledge Base Article 3581862 ('How to troubleshoot approval flow issues?') as the starting diagnostic checklist.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3581862",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3581862"
+    },
+    {
+      "id": "SUPPLIER-001",
+      "category": "supplier_network_account",
+      "question": "A supplier tries to register/link their account to a buyer and gets an 'account is not linked' error, or cannot reuse their existing username.",
+      "root_cause": "Commonly: username already linked to a different supplier profile; the ANID is already linked under a different supplier profile; or duplicate supplier organizations exist for the same company.",
+      "resolution": "Have the buyer-side admin check Ariba Administrator > Supplier and Customer Manager > Users for linked-account conflicts and unify/unlink duplicates, rather than creating a new account.",
+      "confidence": "community_verified",
+      "source_type": "SAP Community Q&A",
+      "source_url": "https://community.sap.com/t5/enterprise-resource-planning-q-a/supplier-login-issues/qaq-p/14178662"
+    },
+    {
+      "id": "AI-JOULE-001",
+      "category": "joule_ai_integration",
+      "question": "Joule navigation prompts in Ariba (e.g., 'go to my approvals') intermittently return no data for some users but work for others.",
+      "root_cause": "Users assigned more than ~150 groups in Ariba have those groups replicated through SAP Cloud Identity Services (IAS) into Build Work Zone (BWZ), which can trigger an HTTP 431 error; Joule's navigation flow only recognizes standard Ariba groups, not custom ones.",
+      "resolution": "Filter which standard Ariba groups replicate to BWZ using an IPS source-system parameter (e.g., ariba.applications.group.filter) limited to groups actually needed for Joule.",
+      "confidence": "community_verified_recent",
+      "source_type": "SAP Community blog (2026)",
+      "source_url": "https://community.sap.com/t5/spend-management-blog-posts-by-members/troubleshooting-ariba-joule-integration-errors/ba-p/14337962"
+    },
+    {
+      "id": "AI-JOULE-002",
+      "category": "joule_ai_integration",
+      "question": "A transactional Joule prompt (e.g., asking Joule to approve/deny something) only returns informational data instead of executing the action.",
+      "root_cause": "The integration 'formation' linking Ariba's buyer/sourcing system to the backend has not fully synchronized ('ibn_target not found'), even though it shows 'ready' status.",
+      "resolution": "In the global account, exclude and then re-include the Ariba buyer and sourcing system within the formation to force re-synchronization.",
+      "confidence": "community_verified_recent",
+      "source_type": "SAP Community blog (2026)",
+      "source_url": "https://community.sap.com/t5/spend-management-blog-posts-by-members/troubleshooting-ariba-joule-integration-errors/ba-p/14337962"
+    },
+    {
+      "id": "SSO-001",
+      "category": "authentication_sso",
+      "question": "User gets 'Identity Provider could not process the authentication request received' when logging into Ariba.",
+      "root_cause": "General SAML2 configuration error class on the Identity Authentication Service (IAS) side (trust configuration, issuer mismatch, or similar) surfaced specifically for Ariba login.",
+      "resolution": "Reference SAP Knowledge Base Article 3710880, which documents this exact error during Ariba login and standard first steps (clear browser cache/cookies, then check IAS trust configuration if it persists).",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3710880",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3710880"
+    },
+    {
+      "id": "SSO-002",
+      "category": "authentication_sso",
+      "question": "Same 'Identity Provider could not process the authentication request received' error, but specifically inside Ariba Central Invoice Management (CIM) when opening an invoice in its connected system.",
+      "root_cause": "A distinct, CIM-specific manifestation of the IAS authentication-request error, tied to CIM's own admin/config/business-data-scope rules rather than general Ariba SSO.",
+      "resolution": "Reference SAP Knowledge Base Article 3487760 for the CIM-specific version of this error.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3487760",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3487760"
+    },
+    {
+      "id": "SSO-003",
+      "category": "authentication_sso",
+      "question": "IAS-related authentication errors mentioning 'Multiple users found with the same identifier which is not allowed in custom tenant.'",
+      "root_cause": "More than one user record in the IAS tenant shares the same identifying attribute (e.g., email) used for SAML NameID matching.",
+      "resolution": "Reference SAP Knowledge Base Article 3430868 for how to identify and de-duplicate the conflicting user records.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3430868",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3430868"
+    },
+    {
+      "id": "SSO-004",
+      "category": "authentication_sso",
+      "question": "After successful IdP authentication, user is redirected back to SAP but sees a 401 Not Authorized error, a logon screen, or a logon popup instead of being logged in.",
+      "root_cause": "SAML2 federation/NameID mismatch class of errors -- format not supported for user assignment, no user found with the given email, or username exceeding max length -- between the ABAP-side SAML2 configuration and the IdP.",
+      "resolution": "Reference SAP Knowledge Base Article 3648446, which documents NameID troubleshooting with configuration examples for exactly this symptom class.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3648446",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3648446"
+    },
+    {
+      "id": "SSO-005",
+      "category": "authentication_sso",
+      "question": "'Authentication Error - Failed to validate the user' appears on Ariba Sourcing/Procurement login, mentioning 'Failed to get Name id' or 'NotBefore'.",
+      "root_cause": "Documented as a server clock/time-synchronization issue between the SAML assertion's validity window (NotBefore/NotOnOrAfter) and the receiving server's clock.",
+      "resolution": "Reference SAP Knowledge Base Article 3174915 for the documented server-time troubleshooting steps.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3174915",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3174915"
+    },
+    {
+      "id": "SSO-006",
+      "category": "authentication_sso_thirdparty",
+      "question": "Third-party/external Ariba users cannot access Ariba after a corporate IdP SSO setup is enabled for the tenant.",
+      "root_cause": "A specific feature toggle (PLAF-1869) controls whether third-party Ariba users are also forwarded to the new corporate IdP; if enabled without those users being properly set up in the IdP, their old direct Ariba credentials stop working.",
+      "resolution": "Ask SAP support to disable the PLAF-1869 feature toggle to revert third-party users back to native Ariba authentication, or properly provision those users in the corporate IdP before re-enabling it.",
+      "confidence": "official_sap_community_verified",
+      "source_type": "SAP Community blog post by SAP staff",
+      "source_url": "https://community.sap.com/t5/technology-blog-posts-by-sap/configuration-sap-ariba-sso-with-corporate-idp-not-to-be-used-for-sap-cloud/ba-p/13665601"
+    },
+    {
+      "id": "SOURCING-001",
+      "category": "sourcing_events",
+      "question": "Supplier cannot submit a bid in a live auction / the Submit button doesn't work as expected.",
+      "root_cause": "Multiple possible causes documented by SAP: staggered vs. parallel vs. serial bidding rule confusion, lot selection issues, or the event's specific bidding-rule configuration blocking submission at that moment.",
+      "resolution": "Reference SAP Knowledge Base Article 3173381 ('Why can't I submit my bid in the auction?') for the full documented checklist covering lot selection and bidding-rule interactions.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3173381",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3173381"
+    },
+    {
+      "id": "SOURCING-002",
+      "category": "sourcing_events",
+      "question": "Participant cannot respond to a sourcing event at all -- the Submit Response button is missing or response fields are absent.",
+      "root_cause": "Event participation state issue -- e.g., participant hasn't declared intent to participate, event is in Preview (not yet Open) status, or prerequisite questions/bidder agreement haven't been accepted yet.",
+      "resolution": "Reference SAP Knowledge Base Article 3174904 ('Why can't I respond to a sourcing event?') which walks through event status and prerequisite-acceptance checks.",
+      "confidence": "official_sap_kba",
+      "source_type": "SAP KBA 3174904",
+      "source_url": "https://userapps.support.sap.com/sap/support/knowledge/en/3174904"
+    }
+  ],
+  "procedural_knowledge_entries": [
+    {
+      "id": "PROC-CONTRACTS-001",
+      "category": "contract_authoring",
+      "topic": "Preparing a Word document before uploading it as a contract/clause source.",
+      "knowledge": "SAP Ariba Contracts extensively relies on Word's own internal formatting/structure metadata to interpret documents (assembled documents, clause library uploads). Because the exact Word version used to create a source document is unknowable, and old embedded formatting code can cause unpredictable parsing behavior, best practice is to 'cleanse' any Word document before uploading: copy its content into a plain text editor first, then paste that plain text into a fresh Word document, before uploading it to SAP Ariba Contracts or the Clause Library.",
+      "source_type": "SAP Press book excerpt",
+      "source_url": "https://s3-eu-west-1.amazonaws.com/gxmedia.galileo-press.de/leseproben/5214/reading_sample_sappress_sap_ariba.pdf"
+    },
+    {
+      "id": "PROC-CONTRACTS-002",
+      "category": "contract_authoring",
+      "topic": "Clause Library governance best practice.",
+      "knowledge": "Structure the Clause Library folder hierarchy to mirror your contract document structure, and do not exceed 50 child subfolders under any one parent folder. When first loading the library, identify near-duplicate clauses across existing agreements and reword them into single standard clauses -- this reduces the total clause count to manage and speeds up contract authoring and approval. Many organizations maintain a separate tracking spreadsheet mapping which clauses are used in which agreement templates, since this isn't natively surfaced well inside the library UI.",
+      "source_type": "SAP Learning course content",
+      "source_url": "https://learning.sap.com/courses/sap-ariba-contracts-preparing-main-agreement-templates-with-enhanced-contract-authoring/learning-all-about-clause-library"
+    },
+    {
+      "id": "PROC-CONTRACTS-003",
+      "category": "contract_authoring",
+      "topic": "Who can view the Clause Library without being a contract author.",
+      "knowledge": "By default there is no access control on the Clause Library, so any user with access to SAP Ariba Contracts can view it via Home dashboard > Search > Clause Library, even if they only have permission to create Contract Requests (not full Contract Workspaces) and are not on the Clause Library project team. They can view/open clauses in Word but cannot edit or add to the library unless they are a team member.",
+      "source_type": "SAP Learning course content",
+      "source_url": "https://learning.sap.com/courses/sap-ariba-contracts-preparing-main-agreement-templates-with-enhanced-contract-authoring/learning-all-about-clause-library"
+    },
+    {
+      "id": "PROC-CONTRACTS-004",
+      "category": "contract_document_types",
+      "topic": "The distinct document types inside a Contract Workspace and what each is for.",
+      "knowledge": "Non-assembled documents (any file type, e.g. Word/Excel/PowerPoint, uploaded whole with no internal structure) are different from Assembled documents (Word-only, built from Clause Library components with an outline/section structure editable both via the Outline View and directly in Word, kept in sync). A Contract Line Items Document (CLID) specifically captures pricing/terms per line item and can be auto-generated from a sourcing award, from a pricing terms Excel file, or manually. Contract Terms documents exist only when Contracts is integrated with Procurement, linking the workspace to a compliance contract request so terms stay synchronized between the two.",
+      "source_type": "SAP Learning course content",
+      "source_url": "https://learning.sap.com/courses/contract-workspace-creation/working-with-contract-documents"
+    },
+    {
+      "id": "PROC-SOURCING-001",
+      "category": "sourcing_events",
+      "topic": "Auction ceiling and reserve values, from the supplier/participant side.",
+      "knowledge": "A 'ceiling value' is the maximum price a supplier is allowed to enter -- bidding above it triggers a rejection message. A 'reserve value' is the price below which the buyer considers it might make economic sense to award, but suppliers are never required to bid below it and it is not necessarily disclosed to them as a hard number. These are configured per lot/line item and can differ across items in the same event.",
+      "source_type": "Buyer-published supplier bid-submission guide (SAP Ariba)",
+      "source_url": "https://wwwapps.nypa.gov/procurement/Ariba/Supplier%20Instructions%20for%20Completing%20a%20Bid%20Submission.pdf"
+    },
+    {
+      "id": "PROC-SOURCING-002",
+      "category": "sourcing_events",
+      "topic": "Declaring intent to participate in a sourcing event.",
+      "knowledge": "SAP Ariba Sourcing does not send suppliers email notifications of messages broadcast to all participants unless the supplier has explicitly declared their intent to participate in that event. Suppliers who skip this step can silently miss important updates, deadline changes, or Q&A responses -- this is a common, non-obvious reason a supplier claims they 'never got notified' about something.",
+      "source_type": "Official SAP Ariba supplier participation guide",
+      "source_url": "https://www.uniper.energy/media/946/download?inline="
+    },
+    {
+      "id": "PROC-SOURCING-003",
+      "category": "sourcing_events",
+      "topic": "Pre-bids and why they matter.",
+      "knowledge": "If a buyer's event allows pre-bidding, a supplier can submit a bid before the live bidding window opens -- useful if they won't be available or expect to be late. Pre-bids are not available for RFIs (which don't collect pricing at all) but are available for RFPs and auctions. Once the live event opens, the pre-bid becomes the supplier's starting position and they can still revise it during the live window.",
+      "source_type": "Official SAP Ariba supplier participation guide",
+      "source_url": "https://www.uniper.energy/media/946/download?inline="
+    },
+    {
+      "id": "PROC-SOURCING-004",
+      "category": "sourcing_events",
+      "topic": "Auction overtime mechanics.",
+      "knowledge": "All auctions have overtime settings that affect every lot in the event. Two parameters control this: 'Start Overtime if Bid is Submitted Within (minutes)' (how close to the lot's scheduled close a new bid must land to trigger overtime) and 'Overtime period (minutes)' (how much time gets added when overtime triggers). Because these are configured per event (sometimes per lot), a flurry of late bids can extend an auction well past its originally scheduled end time -- this is expected behavior, not a system malfunction, but it surprises buyers who didn't review the timing rules before publishing.",
+      "source_type": "SAP Help Portal (Event Timing Rules)",
+      "source_url": "https://help.sap.com/docs/strategic-sourcing/event-rules-reference/about-event-timing-rules"
+    },
+    {
+      "id": "PROC-SSO-001",
+      "category": "authentication_sso",
+      "topic": "How SAP Ariba SSO configuration actually works with SAP Cloud Identity Services (CIS/IAS).",
+      "knowledge": "As of the CFG-324 feature, configuring SSO for SAP Ariba with SAP Cloud Identity Services moved from a manual self-service SAML metadata exchange to a guided automation inside Intelligent Configuration Manager (ICM): Manage > Core Administration (procurement tenant) or Administration (sourcing tenant) > Intelligent Configuration Manager > Manage Configurations > Authentication. For suite-integrated tenants (Sourcing, Contracts, SLP sharing a procurement tenant), the SSO setup and metadata retrieval must be done on the procurement tenant specifically -- doing it on a sub-module tenant will not work. For multi-ERP (formerly 'Federated Process Control') setups, SSO configuration must happen on the parent tenant. Once Activated, SSO cannot be deactivated from ICM self-service -- deactivation or further changes require a support ticket.",
+      "source_type": "SAP Community blog post by SAP staff",
+      "source_url": "https://community.sap.com/t5/technology-blog-posts-by-sap/configure-single-sign-on-for-sap-ariba-with-sap-cloud-identity-services/ba-p/14147133"
+    },
+    {
+      "id": "PROC-INVOICE-001",
+      "category": "invoicing_tolerance",
+      "topic": "Central Invoice Management (CIM) does not let you configure invoice tolerance limits directly inside Ariba.",
+      "knowledge": "In SAP Ariba Central Invoice Management (CIM), small price/quantity variances against a PO cannot be tolerance-configured within Ariba itself -- tolerance limits must be maintained on the connected S/4HANA side. This means a workflow that looks like an Ariba configuration gap (why can't I just set a few-cents tolerance here?) is actually an S/4 configuration task, and the standard workaround people use is the 'Extensive Edit' button to jump into S/4 and correct/tolerate the invoice there -- which is inefficient at high volumes of minor discrepancies and worth flagging to your S/4 team as a batch-tolerance-rule opportunity rather than a per-invoice manual fix.",
+      "source_type": "SAP Community Q&A (2025)",
+      "source_url": "https://community.sap.com/t5/spend-management-q-a/ariba-central-invoice-management-tolerance-limits-amp-small-variances/qaq-p/14089351"
+    }
+  ]
+}

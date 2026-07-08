@@ -1,0 +1,497 @@
+[
+  {
+    "id": "me51n",
+    "title": "ME51N - Create Purchase Requisition",
+    "url": "",
+    "tags": ["me51n", "purchase requisition", "create requisition", "pr", "procurement"],
+    "summary": "Creates a new purchase requisition for requesting goods or services.",
+    "content": "Use ME51N when the requester needs to create a purchase requisition before approval and ordering.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me52n",
+    "title": "ME52N - Change Purchase Requisition",
+    "url": "",
+    "tags": ["me52n", "change requisition", "purchase requisition", "pr"],
+    "summary": "Modifies an existing purchase requisition before final processing or approval.",
+    "content": "Use ME52N to update requisition lines, quantities, dates, or account assignments when allowed.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me53n",
+    "title": "ME53N - Display Purchase Requisition",
+    "url": "",
+    "tags": ["me53n", "display requisition", "purchase requisition", "pr"],
+    "summary": "Displays a purchase requisition in read-only mode for review and validation.",
+    "content": "Use ME53N to inspect requisition details, approval status, and line-item information.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me21n",
+    "title": "ME21N - Create Purchase Order",
+    "url": "",
+    "tags": ["me21n", "purchase order", "create po", "po"],
+    "summary": "Creates a purchase order from approved requisition or purchasing data.",
+    "content": "Use ME21N to create a new purchase order for a vendor or supplier.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me22n",
+    "title": "ME22N - Change Purchase Order",
+    "url": "",
+    "tags": ["me22n", "change purchase order", "po"],
+    "summary": "Changes an existing purchase order when updates are permitted.",
+    "content": "Use ME22N to adjust PO lines, delivery dates, pricing, or vendor data as allowed by policy.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me23n",
+    "title": "ME23N - Display Purchase Order",
+    "url": "",
+    "tags": ["me23n", "display purchase order", "po"],
+    "summary": "Displays purchase order details for review without editing.",
+    "content": "Use ME23N to view PO header data, line items, and status information.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me41",
+    "title": "ME41 - Create Request for Quotation",
+    "url": "",
+    "tags": ["me41", "rfq", "request for quotation"],
+    "summary": "Creates a request for quotation to collect supplier pricing and terms.",
+    "content": "Use ME41 when sourcing requires bids or quotations from suppliers.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me47",
+    "title": "ME47 - Maintain Quotation",
+    "url": "",
+    "tags": ["me47", "quotation", "maintain quotation"],
+    "summary": "Maintains supplier quotation data in the procurement process.",
+    "content": "Use ME47 to enter or update quotation responses received from suppliers.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me49",
+    "title": "ME49 - Compare Quotations",
+    "url": "",
+    "tags": ["me49", "compare quotations", "quotation comparison"],
+    "summary": "Compares supplier quotations to support award decisions.",
+    "content": "Use ME49 to compare pricing and terms across supplier quotations.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me11",
+    "title": "ME11 - Create Info Record",
+    "url": "",
+    "tags": ["me11", "info record", "purchasing info record"],
+    "summary": "Creates a purchasing info record for vendor and material relationships.",
+    "content": "Use ME11 to store vendor pricing, lead time, and purchasing data.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me01",
+    "title": "ME01 - Maintain Source List",
+    "url": "",
+    "tags": ["me01", "source list", "maintain source list"],
+    "summary": "Maintains the approved source list for procurement planning.",
+    "content": "Use ME01 to control which vendors can supply specific materials during the validity period.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "xk01",
+    "title": "XK01 - Create Vendor",
+    "url": "",
+    "tags": ["xk01", "create vendor", "vendor master"],
+    "summary": "Creates a vendor master record in classic SAP master data flows.",
+    "content": "Use XK01 to create a vendor when a new supplier must be entered in the SAP system.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "xk02",
+    "title": "XK02 - Change Vendor",
+    "url": "",
+    "tags": ["xk02", "change vendor", "vendor master"],
+    "summary": "Changes existing vendor master data.",
+    "content": "Use XK02 to update vendor address, payment, or purchasing information when permitted.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "xk03",
+    "title": "XK03 - Display Vendor",
+    "url": "",
+    "tags": ["xk03", "display vendor", "vendor master"],
+    "summary": "Displays vendor master data in read-only mode.",
+    "content": "Use XK03 to review vendor master details without changing records.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "lt01",
+    "title": "LT01 - Create Transfer Order",
+    "url": "",
+    "tags": ["lt01", "transfer order", "warehouse"],
+    "summary": "Creates a transfer order for warehouse movement processes.",
+    "content": "Use LT01 to create a transfer order based on warehouse requirements.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "lt10",
+    "title": "LT10 - Create TO for Transfer Requirement",
+    "url": "",
+    "tags": ["lt10", "transfer order", "transfer requirement"],
+    "summary": "Creates a transfer order from a transfer requirement.",
+    "content": "Use LT10 when warehouse operations need a transfer order created from a transfer requirement.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "lt21",
+    "title": "LT21 - Confirm Transfer Order",
+    "url": "",
+    "tags": ["lt21", "confirm transfer order", "warehouse"],
+    "summary": "Confirms completion of a transfer order in warehouse processing.",
+    "content": "Use LT21 to confirm that a transfer order has been executed.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "lx01",
+    "title": "LX01 - Inventory Count",
+    "url": "",
+    "tags": ["lx01", "inventory count", "count"],
+    "summary": "Supports inventory counting for warehouse or stock processes.",
+    "content": "Use LX01 when counting inventory in a controlled warehouse process.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "lxn1",
+    "title": "LXN1 - Display Inventory Difference",
+    "url": "",
+    "tags": ["lxn1", "inventory difference", "stock difference"],
+    "summary": "Displays inventory differences detected during stock counting or reconciliation.",
+    "content": "Use LXN1 to review inventory discrepancies and investigate count variances.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "scwm_to_create",
+    "title": "/SCWM/TO_CREATE - Create Warehouse Task",
+    "url": "",
+    "tags": ["/scwm/to_create", "warehouse task", "ewm"],
+    "summary": "Creates a warehouse task in SAP Extended Warehouse Management.",
+    "content": "Use /SCWM/TO_CREATE to create warehouse tasks for EWM execution.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "scwm_prdo",
+    "title": "/SCWM/PRDO - Process Warehouse Orders",
+    "url": "",
+    "tags": ["/scwm/prdo", "warehouse order", "ewm"],
+    "summary": "Processes warehouse orders within SAP EWM.",
+    "content": "Use /SCWM/PRDO to manage or process warehouse orders in EWM.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "scwm_mon",
+    "title": "/SCWM/MON - Monitor Warehouse Activities",
+    "url": "",
+    "tags": ["/scwm/mon", "warehouse monitor", "ewm"],
+    "summary": "Monitors warehouse activities and execution status in EWM.",
+    "content": "Use /SCWM/MON to monitor warehouse operations, queues, and task status.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb1c",
+    "title": "MB1C - Initial Stock Entry",
+    "url": "",
+    "tags": ["mb1c", "initial stock entry", "inventory management"],
+    "summary": "Posts an initial stock entry into inventory.",
+    "content": "Use MB1C when entering starting stock into the system.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb1a",
+    "title": "MB1A - Goods Issue",
+    "url": "",
+    "tags": ["mb1a", "goods issue", "inventory"],
+    "summary": "Posts a goods issue from inventory.",
+    "content": "Use MB1A to record stock leaving inventory for consumption or issue.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb1b",
+    "title": "MB1B - Transfer Posting",
+    "url": "",
+    "tags": ["mb1b", "transfer posting", "inventory"],
+    "summary": "Posts inventory transfers between stock types or locations.",
+    "content": "Use MB1B when stock must be moved between inventory categories or locations.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "migo",
+    "title": "MIGO - Goods Movement",
+    "url": "",
+    "tags": ["migo", "goods movement", "grn", "gi", "return"],
+    "summary": "All-in-one transaction for goods receipt, goods issue, transfer, and returns.",
+    "content": "Use MIGO to post most warehouse and inventory movement activities in one place.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb51",
+    "title": "MB51 - Material Document List",
+    "url": "",
+    "tags": ["mb51", "material document list", "reporting"],
+    "summary": "Lists material documents for inventory and logistics review.",
+    "content": "Use MB51 to inspect posted material documents and movement history.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb52",
+    "title": "MB52 - Stock Overview by Storage Location",
+    "url": "",
+    "tags": ["mb52", "stock overview", "storage location"],
+    "summary": "Shows stock levels by storage location.",
+    "content": "Use MB52 to review inventory by storage location and storage type.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb5t",
+    "title": "MB5T - Stock in Transit",
+    "url": "",
+    "tags": ["mb5t", "stock in transit", "inventory"],
+    "summary": "Displays stock currently in transit between locations or plants.",
+    "content": "Use MB5T to monitor stock that has been shipped but not yet received.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vl01n",
+    "title": "VL01N - Create Outbound Delivery",
+    "url": "",
+    "tags": ["vl01n", "outbound delivery", "logistics execution"],
+    "summary": "Creates an outbound delivery for shipping and logistics execution.",
+    "content": "Use VL01N to create outbound deliveries for customer or stock movement processes.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vl02n",
+    "title": "VL02N - Change Outbound Delivery",
+    "url": "",
+    "tags": ["vl02n", "change outbound delivery", "delivery"],
+    "summary": "Changes an outbound delivery before completion.",
+    "content": "Use VL02N to adjust outbound delivery data when allowed.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vl03n",
+    "title": "VL03N - Display Outbound Delivery",
+    "url": "",
+    "tags": ["vl03n", "display outbound delivery", "delivery"],
+    "summary": "Displays outbound delivery details without editing.",
+    "content": "Use VL03N to review outbound delivery status and line items.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vl10b",
+    "title": "VL10B - Purchase Orders Due for Delivery",
+    "url": "",
+    "tags": ["vl10b", "purchase orders due for delivery", "delivery"],
+    "summary": "Lists purchase orders due for delivery.",
+    "content": "Use VL10B to identify purchase orders that are ready for delivery processing.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vl31n",
+    "title": "VL31N - Create Inbound Delivery",
+    "url": "",
+    "tags": ["vl31n", "inbound delivery", "logistics execution"],
+    "summary": "Creates an inbound delivery for receiving goods.",
+    "content": "Use VL31N to create inbound deliveries in receiving and logistics flows.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vt01n",
+    "title": "VT01N - Create Shipment",
+    "url": "",
+    "tags": ["vt01n", "create shipment", "shipment"],
+    "summary": "Creates a shipment document for logistics planning.",
+    "content": "Use VT01N to create a shipment in transportation processing.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vt02n",
+    "title": "VT02N - Change Shipment",
+    "url": "",
+    "tags": ["vt02n", "change shipment", "shipment"],
+    "summary": "Changes shipment data before completion.",
+    "content": "Use VT02N to update shipment details when required.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "vt03n",
+    "title": "VT03N - Display Shipment",
+    "url": "",
+    "tags": ["vt03n", "display shipment", "shipment"],
+    "summary": "Displays shipment data in read-only mode.",
+    "content": "Use VT03N to inspect shipment information and execution status.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "md01",
+    "title": "MD01 - Create MRP Run",
+    "url": "",
+    "tags": ["md01", "mrp run", "planning"],
+    "summary": "Creates an MRP run for planning and supply analysis.",
+    "content": "Use MD01 to execute materials requirement planning.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "md04",
+    "title": "MD04 - Display Stock/Requirement List",
+    "url": "",
+    "tags": ["md04", "stock requirement list", "planning"],
+    "summary": "Displays stock and requirement information for a material.",
+    "content": "Use MD04 to review open demand, supply, and stock status.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "md05",
+    "title": "MD05 - MRP List",
+    "url": "",
+    "tags": ["md05", "mrp list", "planning"],
+    "summary": "Displays the MRP list for planning review.",
+    "content": "Use MD05 to inspect MRP results and planning elements.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "md06",
+    "title": "MD06 - Collective MRP Run",
+    "url": "",
+    "tags": ["md06", "collective mrp run", "planning"],
+    "summary": "Runs collective MRP for multiple materials or plants.",
+    "content": "Use MD06 to execute planning across a group of materials.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mc94",
+    "title": "MC94 - Forecasting",
+    "url": "",
+    "tags": ["mc94", "forecasting", "demand planning"],
+    "summary": "Supports forecasting for planning and demand analysis.",
+    "content": "Use MC94 for forecasting and demand planning tasks.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "sapapo_snp01",
+    "title": "/SAPAPO/SNP01 - Supply Network Planning",
+    "url": "",
+    "tags": ["/sapapo/snp01", "supply network planning", "apo"],
+    "summary": "Runs supply network planning in SAP APO.",
+    "content": "Use /SAPAPO/SNP01 for supply network planning workflows.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "sapapo_ppt1",
+    "title": "/SAPAPO/PPT1 - Product Planning Table",
+    "url": "",
+    "tags": ["/sapapo/ppt1", "product planning table", "apo"],
+    "summary": "Opens the product planning table in SAP APO.",
+    "content": "Use /SAPAPO/PPT1 to plan products and review planning data.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me2n",
+    "title": "ME2N - PO List by PO Number",
+    "url": "",
+    "tags": ["me2n", "po list", "purchase order list"],
+    "summary": "Lists purchase orders by PO number for reporting and tracking.",
+    "content": "Use ME2N to search and analyze POs by document number.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "me80fn",
+    "title": "ME80FN - General Analysis of Purchasing Documents",
+    "url": "",
+    "tags": ["me80fn", "purchasing documents", "analysis"],
+    "summary": "Provides general analysis of purchasing documents.",
+    "content": "Use ME80FN for broad procurement document analysis and reporting.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mc9",
+    "title": "MC.9 - Material Analysis",
+    "url": "",
+    "tags": ["mc.9", "material analysis", "reporting"],
+    "summary": "Analyzes material-related business data for reporting.",
+    "content": "Use MC.9 when material analysis is required for planning or reporting.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb5b",
+    "title": "MB5B - Stock on Posting Date",
+    "url": "",
+    "tags": ["mb5b", "stock on posting date", "inventory"],
+    "summary": "Shows stock as of a specific posting date.",
+    "content": "Use MB5B for date-based stock checks and historical inventory positions.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mb5l",
+    "title": "MB5L - List of Stock Values",
+    "url": "",
+    "tags": ["mb5l", "stock values", "inventory"],
+    "summary": "Lists stock values for inventory valuation and reporting.",
+    "content": "Use MB5L to review stock value reports.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mcba",
+    "title": "MCBA - Vendor Performance Evaluation",
+    "url": "",
+    "tags": ["mcba", "vendor performance", "supplier evaluation"],
+    "summary": "Evaluates vendor performance for procurement decisions.",
+    "content": "Use MCBA to review vendor performance metrics and trends.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "se16n",
+    "title": "SE16N - Table View",
+    "url": "",
+    "tags": ["se16n", "table view", "database table"],
+    "summary": "Displays SAP table contents for analysis and troubleshooting.",
+    "content": "Use SE16N to inspect tables such as EKPO, EKKO, MARC, and other application data tables.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "suim",
+    "title": "SUIM - User Authorization Info",
+    "url": "",
+    "tags": ["suim", "user authorization", "authorization info"],
+    "summary": "Provides user and authorization analysis tools.",
+    "content": "Use SUIM to review roles, authorizations, and user access information.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "st22",
+    "title": "ST22 - Dump Analysis",
+    "url": "",
+    "tags": ["st22", "dump analysis", "error analysis"],
+    "summary": "Analyzes ABAP runtime dumps and system errors.",
+    "content": "Use ST22 to inspect system dumps and investigate runtime failures.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "sm37",
+    "title": "SM37 - Job Monitoring",
+    "url": "",
+    "tags": ["sm37", "job monitoring", "background jobs"],
+    "summary": "Monitors background jobs in the SAP system.",
+    "content": "Use SM37 to review scheduled, running, and completed background jobs.",
+    "confidence": "LocalReference"
+  },
+  {
+    "id": "mek1",
+    "title": "MEK1 - Create Condition Records",
+    "url": "",
+    "tags": ["mek1", "condition records", "pricing"],
+    "summary": "Creates pricing and condition records for procurement.",
+    "content": "Use MEK1 to maintain pricing condition records used in purchasing.",
+    "confidence": "LocalReference"
+  }
+]

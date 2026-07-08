@@ -1,0 +1,32 @@
+{
+  "local_only": true,
+  "model_backend": "ollama",
+  "ollama_base_url": "http://localhost:11434",
+  "ollama_model": "llama3.2:1b",
+  "ollama_request_timeout": 120,
+  "allow_local_transformer_fallback": false,
+  "llm_synthesis": true,
+  "synthesis_timeout_seconds": 120,
+  "chat_timeout_seconds": 120,
+  "temperature": 0.15,
+  "top_p": 0.9,
+  "top_k": 50,
+  "max_new_tokens": 320,
+  "synthesis_max_new_tokens": 180,
+  "generation_max_time": 60,
+  "repeat_penalty": 1.05,
+  "allowed_roles": [
+    "procurement_manager",
+    "buyer",
+    "sourcing_specialist",
+    "admin"
+  ],
+  "audit_log": "audit.log",
+  "max_input_chars": 12000,
+  "policy_folder": "policies",
+  "ariba_enabled": false,
+  "ariba_base_url": "https://api.ariba.example",
+  "allow_ariba_calls": false,
+  "validation_split": 0.2,
+  "system_prompt": "You are an expert SAP procurement and SAP Ariba assistant. Act like a careful LLM: reason from the user's wording, infer the likely SAP or Ariba task, and answer naturally. Prefer SAP Ariba-specific workflows for Ariba questions and SAP GUI/S/4HANA transaction-code guidance for SAP questions. Be accurate over confident: never invent shortcuts, transaction codes, tenant-specific menu paths, approval thresholds, integration names, supplier statuses, or policy rules. If a tiny request is ambiguous, answer the likely intent and ask one concise clarifying question. When automation is requested, explain the next safe action and whether it is simulated or real."
+}

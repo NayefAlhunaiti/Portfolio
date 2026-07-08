@@ -1,0 +1,105 @@
+[
+  {
+    "id": "buyer_registration",
+    "tags": [
+      "register buyer",
+      "buyer registration",
+      "buyer",
+      "buyer role",
+      "shortcut",
+      "keyboard shortcut",
+      "admin"
+    ],
+    "summary": "There is no universal SAP Ariba keyboard shortcut for registering a buyer. Buyer setup is normally handled through tenant administration, role provisioning, or user management workflows.",
+    "key_risks": [
+      "Keyboard shortcuts can differ by Ariba tenant and UI version",
+      "Buyer creation may require admin permissions"
+    ],
+    "recommended_next_step": "Use your Ariba admin or user-provisioning workflow to assign the buyer role, and check your tenant guide for the exact menu path.",
+    "confidence": "High",
+    "policy_references": [
+      "SAP Ariba local knowledge base"
+    ]
+  },
+  {
+    "id": "requisition_number",
+    "tags": [
+      "req number",
+      "requisition number",
+      "requisition generated",
+      "request number",
+      "requisition",
+      "generated"
+    ],
+    "summary": "When a requisition number is generated, it can be used as the trigger for downstream procurement automation, tracking, and approval follow-up.",
+    "key_risks": [
+      "The exact event name differs by tenant integration",
+      "Automation should respect approval and compliance rules"
+    ],
+    "recommended_next_step": "Send the requisition number to the local webhook endpoint so the system can record the event and run the configured automation action.",
+    "confidence": "High",
+    "policy_references": [
+      "SAP Ariba local knowledge base"
+    ]
+  },
+  {
+    "id": "supplier_onboarding",
+    "tags": [
+      "supplier onboarding",
+      "supplier",
+      "vendor",
+      "onboarding",
+      "approval"
+    ],
+    "summary": "Supplier onboarding usually needs validation, approval, and compliance review before the supplier becomes usable in procurement workflows.",
+    "key_risks": [
+      "Using an unapproved supplier can violate procurement policy",
+      "Different regions may require tax, legal, or security checks"
+    ],
+    "recommended_next_step": "Verify the supplier master record and approval status before allowing it into the sourcing or buying flow.",
+    "confidence": "High",
+    "policy_references": [
+      "SAP Ariba local knowledge base"
+    ]
+  },
+  {
+    "id": "requisition_approval",
+    "tags": [
+      "approval",
+      "requisition approval",
+      "approve request",
+      "workflow",
+      "policy"
+    ],
+    "summary": "Requisition approval should follow the organization's policy thresholds, budget checks, and role-based approval chain.",
+    "key_risks": [
+      "Skipping approval can create audit and compliance exposure",
+      "Threshold rules can differ across business units"
+    ],
+    "recommended_next_step": "Confirm the budget owner, threshold, and approval chain before releasing the requisition.",
+    "confidence": "High",
+    "policy_references": [
+      "SAP Ariba local knowledge base"
+    ]
+  },
+  {
+    "id": "catalogs_and_po",
+    "tags": [
+      "catalog",
+      "purchase order",
+      "po",
+      "order",
+      "contract"
+    ],
+    "summary": "Catalog and purchase order actions should follow approved supplier, contract, and policy controls before submission.",
+    "key_risks": [
+      "Contract terms may require legal review",
+      "Using non-catalog items can require extra approvals"
+    ],
+    "recommended_next_step": "Check whether the item is catalog-enabled and whether the request maps to an existing approved contract.",
+    "confidence": "High",
+    "policy_references": [
+      "SAP Ariba local knowledge base"
+    ]
+  }
+]

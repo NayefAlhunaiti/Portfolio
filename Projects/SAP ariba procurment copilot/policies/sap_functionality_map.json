@@ -1,0 +1,140 @@
+[
+  {
+    "id": "procurement_mm",
+    "title": "Procurement (MM Module)",
+    "tags": ["procurement", "mm", "purchase requisition", "purchase order", "rfq", "info record", "source list"],
+    "summary": "Handles core purchasing workflows including requisitions, orders, RFQs, info records, and source lists.",
+    "recommended_next_step": "Use the transaction code that matches the task, then follow your approval and release workflow.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "ME51N", "summary": "Create Purchase Requisition"},
+      {"code": "ME52N", "summary": "Change Purchase Requisition"},
+      {"code": "ME53N", "summary": "Display Purchase Requisition"},
+      {"code": "ME21N", "summary": "Create Purchase Order"},
+      {"code": "ME22N", "summary": "Change Purchase Order"},
+      {"code": "ME23N", "summary": "Display Purchase Order"},
+      {"code": "ME41", "summary": "Create Request for Quotation"},
+      {"code": "ME47", "summary": "Maintain Quotation"},
+      {"code": "ME49", "summary": "Compare Quotations"},
+      {"code": "ME11", "summary": "Create Info Record"},
+      {"code": "ME01", "summary": "Maintain Source List"},
+      {"code": "MEK1", "summary": "Create Condition Records"}
+    ]
+  },
+  {
+    "id": "vendor_master",
+    "title": "Vendor Master Data",
+    "tags": ["vendor", "supplier", "vendor master", "master data"],
+    "summary": "Supports creation, change, and display of vendor master records.",
+    "recommended_next_step": "Use the vendor master transaction that matches your maintenance task and role permissions.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "XK01", "summary": "Create Vendor"},
+      {"code": "XK02", "summary": "Change Vendor"},
+      {"code": "XK03", "summary": "Display Vendor"}
+    ]
+  },
+  {
+    "id": "warehouse_management",
+    "title": "Warehouse Management (WM/EWM)",
+    "tags": ["warehouse", "wm", "ewm", "warehouse task", "warehouse order"],
+    "summary": "Covers classic WM and EWM warehouse execution, task creation, monitoring, and confirmations.",
+    "recommended_next_step": "Use the warehouse transaction or EWM monitor that matches the activity you need to perform.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "LT01", "summary": "Create Transfer Order"},
+      {"code": "LT10", "summary": "Create TO for Transfer Requirement"},
+      {"code": "LT21", "summary": "Confirm Transfer Order"},
+      {"code": "LX01", "summary": "Inventory Count"},
+      {"code": "LXN1", "summary": "Display Inventory Difference"},
+      {"code": "/SCWM/TO_CREATE", "summary": "Create Warehouse Task"},
+      {"code": "/SCWM/PRDO", "summary": "Process Warehouse Orders"},
+      {"code": "/SCWM/MON", "summary": "Monitor Warehouse Activities"}
+    ]
+  },
+  {
+    "id": "inventory_management",
+    "title": "Inventory Management",
+    "tags": ["inventory", "goods movement", "stock", "stock overview", "stock in transit"],
+    "summary": "Covers goods movement, stock transfers, inventory counts, stock status, and material document review.",
+    "recommended_next_step": "Use MIGO for most goods movements, then check the reporting transaction if you need stock visibility.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "MB1C", "summary": "Initial Stock Entry"},
+      {"code": "MB1A", "summary": "Goods Issue"},
+      {"code": "MB1B", "summary": "Transfer Posting"},
+      {"code": "MIGO", "summary": "Goods Movement"},
+      {"code": "MB51", "summary": "Material Document List"},
+      {"code": "MB52", "summary": "Stock Overview by Storage Location"},
+      {"code": "MB5T", "summary": "Stock in Transit"},
+      {"code": "MB5B", "summary": "Stock on Posting Date"},
+      {"code": "MB5L", "summary": "List of Stock Values"}
+    ]
+  },
+  {
+    "id": "logistics_execution",
+    "title": "Logistics Execution (LE)",
+    "tags": ["logistics", "delivery", "shipment", "outbound delivery", "inbound delivery"],
+    "summary": "Supports delivery creation, delivery changes, shipment handling, and delivery due lists.",
+    "recommended_next_step": "Use the delivery or shipment code that matches whether you are creating, changing, or viewing the document.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "VL01N", "summary": "Create Outbound Delivery"},
+      {"code": "VL02N", "summary": "Change Outbound Delivery"},
+      {"code": "VL03N", "summary": "Display Outbound Delivery"},
+      {"code": "VL10B", "summary": "Purchase Orders Due for Delivery"},
+      {"code": "VL31N", "summary": "Create Inbound Delivery"},
+      {"code": "VT01N", "summary": "Create Shipment"},
+      {"code": "VT02N", "summary": "Change Shipment"},
+      {"code": "VT03N", "summary": "Display Shipment"}
+    ]
+  },
+  {
+    "id": "planning_forecasting",
+    "title": "Planning & Forecasting (PP, APO, IBP)",
+    "tags": ["planning", "forecasting", "mrp", "apo", "ibp", "demand planning"],
+    "summary": "Supports MRP planning, forecasting, and network planning processes.",
+    "recommended_next_step": "Pick the planning transaction based on whether you need MRP execution, demand visibility, or forecast planning.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "MD01", "summary": "Create MRP Run"},
+      {"code": "MD04", "summary": "Display Stock/Requirement List"},
+      {"code": "MD05", "summary": "MRP List"},
+      {"code": "MD06", "summary": "Collective MRP Run"},
+      {"code": "MC94", "summary": "Forecasting"},
+      {"code": "/SAPAPO/SNP01", "summary": "Supply Network Planning"},
+      {"code": "/SAPAPO/PPT1", "summary": "Product Planning Table"}
+    ]
+  },
+  {
+    "id": "reporting_analytics",
+    "title": "Reporting & Analytics",
+    "tags": ["reporting", "analytics", "analysis", "vendor performance", "material analysis", "purchasing documents"],
+    "summary": "Provides purchasing, inventory, and vendor performance analysis reports.",
+    "recommended_next_step": "Use the report that best matches the object you want to analyze, such as POs, stock, materials, or vendor performance.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "ME2N", "summary": "PO List by PO Number"},
+      {"code": "ME80FN", "summary": "General Analysis of Purchasing Documents"},
+      {"code": "MC.9", "summary": "Material Analysis"},
+      {"code": "MB5B", "summary": "Stock on Posting Date"},
+      {"code": "MB5L", "summary": "List of Stock Values"},
+      {"code": "MCBA", "summary": "Vendor Performance Evaluation"}
+    ]
+  },
+  {
+    "id": "utilities",
+    "title": "Others / Useful Codes",
+    "tags": ["utilities", "table view", "authorization", "dump analysis", "job monitoring", "condition records"],
+    "summary": "Useful SAP support and administration codes for troubleshooting and maintenance.",
+    "recommended_next_step": "Use the utility transaction that matches troubleshooting, table review, authorization analysis, or background job monitoring.",
+    "policy_references": ["SAP local shortcut catalog"],
+    "codes": [
+      {"code": "SE16N", "summary": "Table View"},
+      {"code": "SUIM", "summary": "User Authorization Info"},
+      {"code": "ST22", "summary": "Dump Analysis"},
+      {"code": "SM37", "summary": "Job Monitoring"},
+      {"code": "MEK1", "summary": "Create Condition Records"}
+    ]
+  }
+]

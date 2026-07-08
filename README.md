@@ -1,4 +1,14 @@
 # Portfolio
-Practical projects with clear setup. 
-This repo lists my small apps, and tech details and credentials with provided certifications.
-B. A personal showcase of apps, utilities, and experiments built while learning and solving problems. 
+
+Practical AI, cloud, and product projects with clear setup notes, supporting documents, and certifications.
+
+## Featured Project
+
+- [SAP Ariba Procurement Copilot](Projects/SAP%20ariba%20procurment%20copilot/README.md) - local-first SAP Ariba procurement assistant with a browser UI, policy-backed knowledge routing, MCP tooling, and safe simulated Ariba actions.
+
+## Other Projects
+
+- AI Powered Fitness Ecosystem
+- Cloud-Based Pneumonia Detection
+- Multi-Task Learning for AI Job Insights
+- PCM

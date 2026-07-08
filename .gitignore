@@ -1,0 +1,28 @@
+.venv/
+.venv-*/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Runtime outputs
+*.log
+sessions/
+**/sessions/
+reports/
+**/reports/
+
+# Local ML artifacts
+models/
+**/models/
+checkpoints/
+**/checkpoints/
+*.faiss
+policy_index.faiss
+policy_meta.json
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

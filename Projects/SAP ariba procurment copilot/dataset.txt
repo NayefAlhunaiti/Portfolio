@@ -1,0 +1,5 @@
+Request purchase requisition above $10,000	Require manager approval and a written justification.
+Use approved supplier for standard office equipment	Only approved suppliers from the vendor list may be used.
+Create contract longer than 12 months	Review with legal before purchase order creation.
+Request IT equipment	Align the purchase with the technology refresh schedule.
+Policy exception requested	Document the risk explanation and get an authorized approver signature.
