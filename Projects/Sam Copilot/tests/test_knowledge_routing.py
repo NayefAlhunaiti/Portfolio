@@ -88,6 +88,35 @@ class KnowledgeRoutingTests(unittest.TestCase):
         self.assertIn("downloaded_ariba_kb", source_types)
         self.assertTrue(any(item.get("id") == "ariba_deep_dive_approval_delegation" for item in knowledge))
 
+    def test_enterprise_hr_and_it_helpdesk_knowledge_is_loaded(self):
+        knowledge = app.load_knowledge_base()
+        source_types = {item.get("source_type") for item in knowledge}
+        self.assertIn("enterprise_helpdesk", source_types)
+        self.assertTrue(any(item.get("id") == "hr_0002" for item in knowledge))
+        self.assertTrue(any(item.get("id") == "it_0001" for item in knowledge))
+
+    def test_password_reset_routes_to_it_helpdesk_knowledge(self):
+        answer, item = app.route_answer(
+            {"role": "buyer", "message": "I forgot my password and cannot sign in", "context": ""},
+            test_config(),
+            [],
+        )
+        self.assertIsNotNone(item)
+        self.assertEqual(item.get("id"), "it_0001")
+        self.assertEqual(item.get("source_type"), "enterprise_helpdesk")
+        self.assertIn("self-service password reset", answer)
+
+    def test_annual_leave_routes_to_hr_knowledge(self):
+        answer, item = app.route_answer(
+            {"role": "buyer", "message": "How do I request annual leave?", "context": ""},
+            test_config(),
+            [],
+        )
+        self.assertIsNotNone(item)
+        self.assertEqual(item.get("id"), "hr_0002")
+        self.assertEqual(item.get("source_type"), "enterprise_helpdesk")
+        self.assertIn("HR system", answer)
+
     def test_specific_approval_delegation_uses_downloaded_deep_dive(self):
         item = app.match_ariba_knowledge("What is approval delegation in Ariba?", "")
         self.assertIsNotNone(item)
@@ -109,6 +138,26 @@ class KnowledgeRoutingTests(unittest.TestCase):
         self.assertIsNotNone(item)
         self.assertEqual(item.get("id"), "ariba_troubleshooting_1")
         self.assertNotIn("ME52N", answer)
+
+    def test_requisition_approval_does_not_collide_with_create_requisition_tcode(self):
+        answer, item = app.route_answer(
+            {"role": "buyer", "message": "approve requisition", "context": ""},
+            test_config(),
+            [],
+        )
+        self.assertIsNotNone(item)
+        self.assertEqual(item.get("id"), "requisition_approval")
+        self.assertNotIn("ME51N", answer)
+
+    def test_supplier_onboarding_does_not_collide_with_vendor_create_tcode(self):
+        answer, item = app.route_answer(
+            {"role": "buyer", "message": "supplier onboarding", "context": ""},
+            test_config(),
+            [],
+        )
+        self.assertIsNotNone(item)
+        self.assertEqual(item.get("id"), "supplier_onboarding")
+        self.assertNotIn("XK01", answer)
 
     def test_exact_tcode_related_sources_do_not_pull_ariba_workflow_noise(self):
         sources = app.find_relevant_sources("What is ME51N?", "", max_items=5)

@@ -3,6 +3,12 @@
   "model_backend": "ollama",
   "ollama_base_url": "http://localhost:11434",
   "ollama_model": "llama3.2:1b",
+  "ollama_model_options": [
+    "llama3.2:1b",
+    "llama3.1:8b"
+  ],
+  "demo_profile": "1B local prototype",
+  "demo_runtime_note": "Choose 1B for lightweight speed or 8B for stronger answer quality",
   "ollama_request_timeout": 120,
   "allow_local_transformer_fallback": false,
   "llm_synthesis": true,

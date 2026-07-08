@@ -3,197 +3,343 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Local Procurement Copilot</title>
+  <title>Sam Copilot</title>
   <style>
     :root {
-      --bg: #f4efe7;
-      --panel: #ffffff;
-      --panel-soft: #faf8f2;
-      --ink: #18212f;
+      --page-bg: #e0f2fe;
+      --window: #ffffff;
+      --window-soft: #f0f9ff;
+      --sky: #38bdf8;
+      --sky-strong: #0284c7;
+      --sky-deep: #075985;
+      --ink: #0f172a;
       --muted: #64748b;
-      --accent: #7c3aed;
-      --accent-2: #0f766e;
-      --line: #e5e7eb;
-      --shadow: 0 20px 55px rgba(24, 33, 47, 0.12);
+      --line: #bae6fd;
+      --danger: #b91c1c;
+      --shadow: 0 24px 70px rgba(3, 105, 161, 0.26);
     }
+
     * { box-sizing: border-box; }
+
     body {
+      min-height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at top left, rgba(124, 58, 237, 0.12), transparent 26%),
-        radial-gradient(circle at top right, rgba(15, 118, 110, 0.10), transparent 28%),
-        linear-gradient(135deg, var(--bg) 0%, #eef2ff 100%);
+        radial-gradient(circle at 20% 12%, rgba(56, 189, 248, 0.35), transparent 34%),
+        linear-gradient(135deg, #e0f2fe 0%, #f8fafc 100%);
     }
-    .wrap {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 24px 16px 36px;
-    }
-    .hero {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .card, .panel {
-      background: var(--panel);
+
+    .widget-shell {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: min(420px, calc(100vw - 32px));
+      height: min(720px, calc(100vh - 48px));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--window);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 8px;
       box-shadow: var(--shadow);
     }
-    .card { padding: 26px; }
-    .panel { overflow: hidden; }
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 4vw, 3rem);
-    }
-    p { line-height: 1.6; }
-    .tag, .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.82rem;
-      margin-bottom: 14px;
-    }
-    .tag { background: #ede9fe; color: #6d28d9; }
-    .pill { background: #dcfce7; color: #166534; }
-    .grid {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 16px;
-    }
-    .head {
+
+    .widget-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 12px;
-      padding: 18px 20px;
-      background: var(--panel-soft);
+      padding: 14px 16px;
+      background: linear-gradient(135deg, var(--sky) 0%, #7dd3fc 100%);
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.36);
+    }
+
+    .logo-wrap {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      color: var(--sky-deep);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 5px;
+    }
+
+    .brand {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.84rem;
+      line-height: 1.3;
+    }
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-top: 6px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.24);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button, select, textarea {
+      font: inherit;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.42);
+    }
+
+    .controls {
+      padding: 12px 14px;
+      background: var(--window-soft);
       border-bottom: 1px solid var(--line);
     }
-    .body { padding: 18px 20px 20px; }
+
+    details summary {
+      cursor: pointer;
+      color: var(--sky-deep);
+      font-weight: 700;
+      font-size: 0.9rem;
+      list-style-position: inside;
+    }
+
+    .controls-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
     label {
       display: block;
-      font-size: 0.85rem;
+      margin-bottom: 5px;
       color: var(--muted);
-      margin-bottom: 6px;
+      font-size: 0.82rem;
     }
-    select, textarea, button {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      font: inherit;
-    }
+
     select, textarea {
-      padding: 12px 14px;
+      width: 100%;
+      padding: 10px 11px;
       background: #fff;
       color: var(--ink);
     }
+
     textarea {
-      min-height: 96px;
+      min-height: 78px;
       resize: vertical;
     }
-    .field { margin-bottom: 12px; }
-    .actions {
+
+    .check-label {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-    button {
-      cursor: pointer;
-      padding: 11px 16px;
-      font-weight: 700;
-    }
-    .primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .secondary {
-      background: #e5e7eb;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
       color: var(--ink);
+      font-size: 0.88rem;
     }
-    .chat {
-      display: flex;
-      flex-direction: column;
-      min-height: 620px;
+
+    .check-label input {
+      width: auto;
+      margin: 0;
     }
+
+    .row-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .secondary {
+      width: 100%;
+      padding: 9px 10px;
+      background: #e0f2fe;
+      color: var(--sky-deep);
+      border-color: #bae6fd;
+    }
+
+    .status-line {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .error {
+      color: var(--danger);
+    }
+
     .messages {
       flex: 1;
-      padding: 18px 20px;
+      min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      overflow: auto;
-      background: linear-gradient(180deg, #fff, #fbfaf7);
+      gap: 10px;
+      padding: 14px;
+      overflow-y: auto;
+      background:
+        linear-gradient(180deg, rgba(240, 249, 255, 0.72), rgba(255, 255, 255, 0.98));
     }
+
     .bubble {
-      max-width: 92%;
-      padding: 14px 16px;
-      border-radius: 16px;
+      max-width: 88%;
+      padding: 11px 12px;
+      border-radius: 8px;
       white-space: pre-wrap;
-      line-height: 1.55;
-      border: 1px solid var(--line);
-    }
-    .bubble.user { align-self: flex-end; background: #ede9fe; border-color: #ddd6fe; }
-    .bubble.assistant { align-self: flex-start; background: #eff6ff; border-color: #bfdbfe; }
-    .bubble.meta { align-self: flex-start; background: #f8fafc; color: var(--muted); font-size: 0.94rem; }
-    .composer {
-      border-top: 1px solid var(--line);
-      background: var(--panel-soft);
-      padding: 18px 20px 20px;
-    }
-    .status {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    code {
-      background: #f3f4f6;
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-    .mini {
-      color: var(--muted);
+      line-height: 1.48;
       font-size: 0.92rem;
-      margin: 6px 0 0;
+      border: 1px solid var(--line);
+      overflow-wrap: anywhere;
     }
-    .error {
-      color: #991b1b;
+
+    .bubble.user {
+      align-self: flex-end;
+      color: #fff;
+      background: var(--sky-strong);
+      border-color: var(--sky-strong);
     }
-    @media (max-width: 960px) {
-      .hero, .grid { grid-template-columns: 1fr; }
-      .chat { min-height: 560px; }
+
+    .bubble.assistant {
+      align-self: flex-start;
+      background: #ffffff;
+      border-color: #bae6fd;
+    }
+
+    .bubble.meta {
+      align-self: center;
+      max-width: 96%;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 0.82rem;
+    }
+
+    .composer {
+      padding: 12px;
+      background: var(--window);
+      border-top: 1px solid var(--line);
+    }
+
+    .composer textarea {
+      min-height: 76px;
+      max-height: 150px;
+    }
+
+    .send-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .primary {
+      flex: 1;
+      padding: 11px 14px;
+      color: #fff;
+      background: var(--sky-strong);
+      border-color: var(--sky-strong);
+    }
+
+    .primary:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    code {
+      padding: 1px 4px;
+      border-radius: 5px;
+      background: #e0f2fe;
+      color: var(--sky-deep);
+    }
+
+    .is-minimized {
+      height: auto;
+    }
+
+    .is-minimized .controls,
+    .is-minimized .messages,
+    .is-minimized .composer {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .widget-shell {
+        right: 10px;
+        bottom: 10px;
+        width: calc(100vw - 20px);
+        height: calc(100vh - 20px);
+      }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <div class="card">
-        <div class="tag">Local only</div>
-        <h1>Procurement Copilot</h1>
-        <p>Chat with an SAP and SAP Ariba procurement assistant grounded on local policy, workflow knowledge, and safe action guidance.</p>
+  <main class="widget-shell" id="widgetShell" aria-label="Sam Copilot chat window">
+    <header class="widget-header">
+      <div class="logo-wrap" aria-label="Company logo">
+        <img id="companyLogo" src="/assets/company-logo.webp" alt="Company logo" />
+        <span id="logoFallback">SAM</span>
       </div>
-      <div class="card">
-        <div class="pill">Assistant ready</div>
-        <p class="mini">Ask about SAP T-codes, Ariba workflows, requisitions, approvals, suppliers, catalogs, purchase orders, or procurement controls.</p>
-        <p class="mini">Tip: Ctrl+Enter also sends the message.</p>
+      <div class="brand">
+        <h1>Sam Copilot</h1>
+        <p>Enterprise assistant for HR, IT, SAP, and Ariba help.</p>
+        <span class="demo-badge">__DEMO_PROFILE__</span>
       </div>
-    </section>
+      <div class="header-actions">
+        <button id="minimizeBtn" class="icon-btn" type="button" title="Minimize chat" aria-label="Minimize chat">-</button>
+      </div>
+    </header>
 
-    <section class="grid">
-      <aside class="panel">
-        <div class="head">
-          <strong>Controls</strong>
-          <button id="newSessionBtn" class="secondary" type="button">New Session</button>
-        </div>
-        <div class="body">
-          <div class="field">
+    <section class="controls">
+      <details>
+        <summary>Chat settings</summary>
+        <div class="controls-grid">
+          <div>
             <label for="role">Role</label>
             <select id="role">
               <option value="buyer">Buyer</option>
@@ -202,11 +348,11 @@
               <option value="admin">Admin</option>
             </select>
           </div>
-          <div class="field">
+          <div>
             <label for="context">Context</label>
-            <textarea id="context" placeholder="Paste requisition details, supplier context, or the policy scenario here."></textarea>
+            <textarea id="context" placeholder="Add HR, IT, SAP, Ariba, ticket, or policy context here."></textarea>
           </div>
-          <div class="field">
+          <div>
             <label for="responseStyle">Response style</label>
             <select id="responseStyle">
               <option value="human" selected>Human-friendly</option>
@@ -214,59 +360,74 @@
               <option value="structured">Structured JSON</option>
             </select>
           </div>
-          <div class="field">
-            <label>
-              <input id="autoImplement" type="checkbox" />
-              Auto-implement request details
-            </label>
-            <p class="mini">Turns a chat request into a simulated procurement action when possible.</p>
+          <div>
+            <label for="modelSelect">Ollama model</label>
+            <select id="modelSelect">
+              <option value="llama3.2:1b" selected>1B prototype - llama3.2:1b</option>
+              <option value="llama3.1:8b">8B stronger answers - llama3.1:8b</option>
+            </select>
           </div>
-          <div class="actions">
-            <button id="copySessionBtn" class="secondary" type="button">Copy Session ID</button>
+          <label class="check-label">
+            <input id="autoImplement" type="checkbox" />
+            Auto-implement request details
+          </label>
+          <p class="status-line">Selected model: <code id="selectedModelText">__OLLAMA_MODEL__</code></p>
+          <p class="status-line">Demo note: __DEMO_RUNTIME_NOTE__.</p>
+          <div class="row-actions">
+            <button id="newSessionBtn" class="secondary" type="button">New Session</button>
             <button id="clearBtn" class="secondary" type="button">Clear Chat</button>
           </div>
-          <p class="mini">Session ID: <code id="sessionIdText"></code></p>
-          <p class="mini">Status: <span id="statusText">Ready</span></p>
-          <p class="mini error" id="errorText"></p>
+          <button id="copySessionBtn" class="secondary" type="button">Copy Session ID</button>
+          <p class="status-line">Session ID: <code id="sessionIdText"></code></p>
+          <p class="status-line">Status: <span id="statusText">Ready</span></p>
+          <p class="status-line error" id="errorText"></p>
         </div>
-      </aside>
+      </details>
+    </section>
 
-      <section class="panel chat">
-        <div class="head">
-          <strong>Chat</strong>
-          <span class="pill" style="margin:0">SAP / Ariba</span>
+    <section class="messages" id="messages" aria-live="polite"></section>
+
+    <section class="composer">
+      <form id="chatForm">
+        <label for="message">Message</label>
+        <textarea id="message" placeholder="Ask about password reset, annual leave, SAP T-codes, Ariba workflows, or approvals." required></textarea>
+        <div class="send-row">
+          <button id="sendBtn" class="primary" type="submit">Send</button>
         </div>
-        <div class="messages" id="messages"></div>
-        <div class="composer">
-          <form id="chatForm">
-            <div class="field">
-              <label for="message">Message</label>
-              <textarea id="message" placeholder="Ask something like: what is the shortcut in SAP Ariba for registering a buyer?" required></textarea>
-            </div>
-            <div class="actions">
-              <button id="sendBtn" class="primary" type="submit">Send</button>
-            </div>
-          </form>
-        </div>
-      </section>
+      </form>
     </section>
   </main>
 
   <script>
-    const SESSION_KEY = "procurement_session_id";
-    const HISTORY_KEY = "procurement_chat_history_v2";
+    const SESSION_KEY = "sam_copilot_session_id";
+    const HISTORY_KEY = "sam_copilot_chat_history_v1";
 
+    const widgetShell = document.getElementById("widgetShell");
     const messagesEl = document.getElementById("messages");
     const roleEl = document.getElementById("role");
     const contextEl = document.getElementById("context");
     const responseStyleEl = document.getElementById("responseStyle");
+    const modelSelectEl = document.getElementById("modelSelect");
     const autoImplementEl = document.getElementById("autoImplement");
     const messageEl = document.getElementById("message");
     const statusEl = document.getElementById("statusText");
     const errorEl = document.getElementById("errorText");
     const sessionEl = document.getElementById("sessionIdText");
     const sendBtn = document.getElementById("sendBtn");
+    const selectedModelTextEl = document.getElementById("selectedModelText");
     const chatForm = document.getElementById("chatForm");
+    const minimizeBtn = document.getElementById("minimizeBtn");
+    const companyLogo = document.getElementById("companyLogo");
+    const logoFallback = document.getElementById("logoFallback");
+
+    companyLogo.addEventListener("load", () => {
+      logoFallback.style.display = "none";
+    });
+
+    companyLogo.addEventListener("error", () => {
+      companyLogo.style.display = "none";
+      logoFallback.style.display = "inline";
+    });
 
     function makeSessionId() {
       if (window.crypto && crypto.randomUUID) {
@@ -290,6 +451,10 @@
 
     function setError(text) {
       errorEl.textContent = text || "";
+    }
+
+    function updateSelectedModelText() {
+      selectedModelTextEl.textContent = modelSelectEl.value;
     }
 
     function scrollToBottom() {
@@ -347,13 +512,13 @@
         scrollToBottom();
         return;
       }
-      addBubble("meta", "Ask a procurement question, approval question, or SAP Ariba workflow question.");
+      addBubble("meta", "Hi, I am Sam Copilot. Ask about HR, IT helpdesk, SAP, Ariba, approvals, or procurement workflows.");
     }
 
     function resetChatWindow(message) {
       messagesEl.innerHTML = "";
       localStorage.removeItem(HISTORY_KEY);
-      addBubble("meta", message || "New chat started. Ask a procurement, SAP, or SAP Ariba question.");
+      addBubble("meta", message || "New chat started. Ask Sam Copilot a question.");
       messageEl.value = "";
       setError("");
       setStatus("Ready");
@@ -365,7 +530,7 @@
       const newSessionId = makeSessionId();
       localStorage.setItem(SESSION_KEY, newSessionId);
       sessionEl.textContent = newSessionId;
-      resetChatWindow("New chat started. Ask a procurement, SAP, or SAP Ariba question.");
+      resetChatWindow("New chat started. Ask Sam Copilot a question.");
       await clearServerSession(oldSessionId);
     }
 
@@ -416,6 +581,7 @@
             role: roleEl.value,
             message: text,
             context: contextEl.value,
+            ollama_model: modelSelectEl.value,
             response_style: responseStyleEl.value,
             auto_implement: autoImplementEl.checked
           })
@@ -429,6 +595,9 @@
         addBubble("assistant", answerText || "(empty response)");
         if (payload.relevant_policies && payload.relevant_policies.length) {
           addBubble("meta", "Relevant policies: " + payload.relevant_policies.join(", "));
+        }
+        if (payload.model) {
+          addBubble("meta", "Model used: " + payload.model);
         }
         if (payload.implementation) {
           const implementation = payload.implementation;
@@ -464,6 +633,15 @@
       await startNewSession();
     });
 
+    modelSelectEl.addEventListener("change", updateSelectedModelText);
+
+    minimizeBtn.addEventListener("click", () => {
+      const minimized = widgetShell.classList.toggle("is-minimized");
+      minimizeBtn.textContent = minimized ? "+" : "-";
+      minimizeBtn.title = minimized ? "Open chat" : "Minimize chat";
+      minimizeBtn.setAttribute("aria-label", minimized ? "Open chat" : "Minimize chat");
+    });
+
     chatForm.addEventListener("submit", (event) => {
       event.preventDefault();
       sendMessage();
@@ -484,6 +662,8 @@
     });
 
     sessionEl.textContent = getSessionId();
+    modelSelectEl.value = "__OLLAMA_MODEL__";
+    updateSelectedModelText();
     loadHistory();
   </script>
 </body>

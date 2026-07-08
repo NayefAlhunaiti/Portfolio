@@ -1,0 +1,405 @@
+{
+  "metadata": {
+    "dataset_name": "Generic Enterprise SharePoint Chatbot Knowledge Base",
+    "version": "1.0.0-prototype",
+    "created": "2026-07-08",
+    "purpose": "Safe generic prototype data for a local secure-company SharePoint chatbot",
+    "privacy_note": "Contains no real company confidential information, employee data, or proprietary internal documents.",
+    "recommended_retrieval": "hybrid keyword + vector search",
+    "schema_fields": [
+      "id",
+      "domain",
+      "category",
+      "title",
+      "question_variants",
+      "keywords",
+      "answer",
+      "resolution_steps",
+      "requires_authentication",
+      "priority",
+      "escalation_team",
+      "estimated_resolution",
+      "related_topics",
+      "source_type",
+      "safe_for_local_prototype",
+      "last_reviewed"
+    ],
+    "domain": "Human Resources",
+    "entry_count": 12
+  },
+  "entries": [
+    {
+      "id": "HR-0001",
+      "domain": "Human Resources",
+      "category": "onboarding",
+      "title": "New employee onboarding",
+      "question_variants": [
+        "New hire onboarding",
+        "First day process",
+        "Employee onboarding steps",
+        "Joiner checklist"
+      ],
+      "keywords": [
+        "Employee ID",
+        "Mandatory training"
+      ],
+      "answer": "Onboarding introduces the employee to company systems, policies, team contacts, and required training.",
+      "resolution_steps": [
+        "Complete pre-employment forms.",
+        "Attend orientation.",
+        "Collect ID badge and equipment.",
+        "Complete mandatory training.",
+        "Confirm manager check-in."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0002",
+      "domain": "Human Resources",
+      "category": "leave",
+      "title": "Annual leave request",
+      "question_variants": [
+        "Apply annual leave",
+        "Vacation request",
+        "How to request leave",
+        "Leave balance"
+      ],
+      "keywords": [
+        "Sick leave",
+        "Public holidays"
+      ],
+      "answer": "Annual leave should be requested through the HR system and approved by the manager before travel or absence.",
+      "resolution_steps": [
+        "Check leave balance.",
+        "Submit dates in HR system.",
+        "Add backup/contact plan if needed.",
+        "Wait for manager approval."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0003",
+      "domain": "Human Resources",
+      "category": "leave",
+      "title": "Sick leave",
+      "question_variants": [
+        "Sick leave policy",
+        "I am sick",
+        "Medical leave",
+        "Upload sick note"
+      ],
+      "keywords": [
+        "Annual leave",
+        "Return to work"
+      ],
+      "answer": "Sick leave must be recorded in the HR system. Medical documentation may be required depending on duration and local policy.",
+      "resolution_steps": [
+        "Notify manager as soon as practical.",
+        "Submit sick leave request.",
+        "Attach medical document if required.",
+        "Update expected return date."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0004",
+      "domain": "Human Resources",
+      "category": "payroll",
+      "title": "Payslip access",
+      "question_variants": [
+        "Where is my payslip",
+        "Download salary slip",
+        "Payslip not visible",
+        "Payroll statement"
+      ],
+      "keywords": [
+        "Salary transfer",
+        "Deductions"
+      ],
+      "answer": "Payslips are usually available in the HR or payroll portal after payroll processing is complete.",
+      "resolution_steps": [
+        "Open payroll portal.",
+        "Select pay period.",
+        "Download PDF.",
+        "Contact Payroll if missing after published date."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Payroll Team",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0005",
+      "domain": "Human Resources",
+      "category": "payroll",
+      "title": "Salary bank account change",
+      "question_variants": [
+        "Change bank account",
+        "Update IBAN",
+        "Salary account update",
+        "Payroll bank details"
+      ],
+      "keywords": [
+        "Payslip access",
+        "Payroll cutoff"
+      ],
+      "answer": "Salary bank account changes require verified employee identity and accurate banking details before payroll cutoff.",
+      "resolution_steps": [
+        "Open employee self-service.",
+        "Enter new bank details.",
+        "Upload supporting document if required.",
+        "Submit before payroll cutoff."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "Payroll Team",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0006",
+      "domain": "Human Resources",
+      "category": "benefits",
+      "title": "Medical insurance card",
+      "question_variants": [
+        "Insurance card",
+        "Medical coverage",
+        "Health insurance",
+        "Dependent insurance"
+      ],
+      "keywords": [
+        "Dependents",
+        "Benefits enrollment"
+      ],
+      "answer": "Medical insurance details and cards are available through HR benefits or the insurance provider portal.",
+      "resolution_steps": [
+        "Open benefits portal.",
+        "Check active coverage.",
+        "Download e-card.",
+        "Contact HR Benefits for corrections."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Benefits Team",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0007",
+      "domain": "Human Resources",
+      "category": "attendance",
+      "title": "Attendance correction",
+      "question_variants": [
+        "Fix attendance",
+        "Missed punch",
+        "Correct check in",
+        "Timesheet correction"
+      ],
+      "keywords": [
+        "Overtime",
+        "Work schedule"
+      ],
+      "answer": "Attendance corrections require employee explanation and manager approval.",
+      "resolution_steps": [
+        "Open attendance system.",
+        "Select date.",
+        "Submit correction reason.",
+        "Manager reviews and approves."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0008",
+      "domain": "Human Resources",
+      "category": "performance",
+      "title": "Performance review cycle",
+      "question_variants": [
+        "Performance appraisal",
+        "Annual review",
+        "Set goals",
+        "Review deadline"
+      ],
+      "keywords": [
+        "Promotion",
+        "Probation"
+      ],
+      "answer": "Performance reviews include goal setting, self-assessment, manager feedback, and final rating when applicable.",
+      "resolution_steps": [
+        "Review goal template.",
+        "Complete self-assessment.",
+        "Discuss with manager.",
+        "Acknowledge final review."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Talent Management",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0009",
+      "domain": "Human Resources",
+      "category": "conduct",
+      "title": "Code of conduct question",
+      "question_variants": [
+        "Code of conduct",
+        "Workplace behavior",
+        "Ethics policy",
+        "Conflict of interest"
+      ],
+      "keywords": [
+        "Whistleblowing",
+        "Conflict of interest"
+      ],
+      "answer": "Employees should follow company conduct, ethics, confidentiality, and conflict-of-interest requirements.",
+      "resolution_steps": [
+        "Review the code of conduct.",
+        "Ask HR or Compliance when unsure.",
+        "Disclose conflicts through approved channel."
+      ],
+      "requires_authentication": false,
+      "priority": "medium",
+      "escalation_team": "HR Compliance",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0010",
+      "domain": "Human Resources",
+      "category": "offboarding",
+      "title": "Resignation process",
+      "question_variants": [
+        "How to resign",
+        "Submit resignation",
+        "Notice period",
+        "Leaving company"
+      ],
+      "keywords": [
+        "Final settlement",
+        "Asset return"
+      ],
+      "answer": "Resignation should be submitted formally through the approved HR process and discussed with the manager.",
+      "resolution_steps": [
+        "Submit resignation in HR system or written channel.",
+        "Confirm notice period.",
+        "Prepare handover.",
+        "Return company assets.",
+        "Complete exit interview if scheduled."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0011",
+      "domain": "Human Resources",
+      "category": "training",
+      "title": "Mandatory training",
+      "question_variants": [
+        "Required training",
+        "Compliance training",
+        "Training overdue",
+        "Learning portal"
+      ],
+      "keywords": [
+        "Onboarding",
+        "Code of conduct"
+      ],
+      "answer": "Mandatory training must be completed by assigned deadlines to meet compliance and policy requirements.",
+      "resolution_steps": [
+        "Open learning portal.",
+        "Complete assigned modules.",
+        "Pass required quizzes.",
+        "Save completion confirmation if needed."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Learning and Development",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "HR-0012",
+      "domain": "Human Resources",
+      "category": "employee_records",
+      "title": "Update personal information",
+      "question_variants": [
+        "Change address",
+        "Update phone number",
+        "Personal details update",
+        "Emergency contact"
+      ],
+      "keywords": [
+        "Bank account change",
+        "Dependents"
+      ],
+      "answer": "Employees are responsible for keeping personal and emergency contact details current in the HR system.",
+      "resolution_steps": [
+        "Open employee profile.",
+        "Edit relevant fields.",
+        "Attach document if required.",
+        "Submit for HR verification."
+      ],
+      "requires_authentication": true,
+      "priority": "low",
+      "escalation_team": "HR Operations",
+      "estimated_resolution": "1 business day",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    }
+  ]
+}

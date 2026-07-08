@@ -1,6 +1,7 @@
 import glob
 import json
 import logging
+import mimetypes
 import os
 import re
 import sys
@@ -20,6 +21,7 @@ POLICY_DIR = ROOT / "policies"
 ARIBA_KB_PATH = POLICY_DIR / "sap_ariba_knowledge.json"
 SAP_DOCS_PATH = POLICY_DIR / "sap_official_docs.json"
 SESSIONS_DIR = ROOT / "sessions"
+ASSETS_DIR = ROOT / "assets"
 
 # in-memory session store (also persisted)
 SESSIONS_DIR.mkdir(exist_ok=True)
@@ -30,6 +32,15 @@ MODEL_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 def load_config():
     with CONFIG_PATH.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def apply_runtime_config_overrides(config, payload):
+    runtime_config = dict(config)
+    requested_model = str(payload.get("ollama_model") or payload.get("model") or "").strip()
+    allowed_models = config.get("ollama_model_options") or [config.get("ollama_model")]
+    if requested_model and requested_model in allowed_models:
+        runtime_config["ollama_model"] = requested_model
+    return runtime_config
 
 
 def ensure_audit_log():
@@ -62,6 +73,8 @@ def load_ariba_knowledge():
 
 def source_type_for_path(path):
     name = path.name.lower()
+    if name in {"hr_kb.json", "it_helpdesk_kb.json"}:
+        return "enterprise_helpdesk"
     if name == "sap_ariba_knowledge.json":
         return "local_ariba"
     if name == "sap_official_docs.json":
@@ -245,6 +258,74 @@ def flatten_downloaded_ariba_kb(data, path):
     return records
 
 
+def flatten_sharepoint_chatbot_kb(data, path):
+    if not isinstance(data, dict) or not isinstance(data.get("entries"), list):
+        return []
+
+    records = []
+    metadata = data.get("metadata") if isinstance(data.get("metadata"), dict) else {}
+    dataset_name = metadata.get("dataset_name") or "Enterprise SharePoint chatbot knowledge base"
+
+    for entry in data.get("entries", []):
+        if not isinstance(entry, dict):
+            continue
+        title = str(entry.get("title") or entry.get("id") or "").strip()
+        answer = str(entry.get("answer") or "").strip()
+        if not title or not answer:
+            continue
+
+        steps = entry.get("resolution_steps") if isinstance(entry.get("resolution_steps"), list) else []
+        tags = []
+        for value in [
+            entry.get("domain"),
+            entry.get("category"),
+            title,
+            *(entry.get("question_variants") if isinstance(entry.get("question_variants"), list) else []),
+        ]:
+            if value and str(value) not in tags:
+                tags.append(str(value))
+
+        risks = []
+        if entry.get("requires_authentication"):
+            risks.append("This request may require employee identity verification or authenticated access.")
+        if str(entry.get("priority", "")).lower() in {"high", "critical"}:
+            risks.append(f"Priority is {entry.get('priority')}; escalate promptly if business impact is active.")
+
+        next_step = " ".join(str(step) for step in steps[:3])
+        escalation_team = entry.get("escalation_team")
+        estimated_resolution = entry.get("estimated_resolution")
+        if escalation_team:
+            next_step = f"{next_step} Escalate to {escalation_team} if unresolved.".strip()
+        if estimated_resolution:
+            next_step = f"{next_step} Estimated resolution: {estimated_resolution}.".strip()
+
+        content_parts = [
+            f"Domain: {entry.get('domain', '')}",
+            f"Category: {entry.get('category', '')}",
+            f"Question variants: {stringify_kb_value(entry.get('question_variants', []))}",
+            f"Keywords: {stringify_kb_value(entry.get('keywords', []))}",
+            f"Resolution steps: {stringify_kb_value(steps)}",
+            f"Escalation team: {escalation_team or ''}",
+            f"Estimated resolution: {estimated_resolution or ''}",
+        ]
+        item = {
+            "id": normalize_text(entry.get("id") or title).replace(" ", "_"),
+            "title": f"{entry.get('domain', 'Enterprise Helpdesk')} - {title}",
+            "summary": answer,
+            "content": " ".join(part for part in content_parts if part),
+            "tags": tags + tags_from_text(answer, next_step),
+            "key_risks": risks,
+            "recommended_next_step": next_step,
+            "confidence": "High",
+            "policy_references": [dataset_name, str(entry.get("domain") or "Enterprise Helpdesk")],
+        }
+        normalized = normalize_knowledge_item(item, path)
+        if normalized:
+            records.append(normalized)
+
+    return records
+
+
 def normalize_knowledge_item(item, path):
     if not isinstance(item, dict):
         return None
@@ -278,7 +359,12 @@ def normalize_knowledge_item(item, path):
 
 def load_knowledge_base():
     knowledge = []
-    for path in sorted(POLICY_DIR.glob("sap_*.json")):
+    paths = {
+        path
+        for pattern in ("sap_*.json", "hr_kb.json", "it_helpdesk_kb.json")
+        for path in POLICY_DIR.glob(pattern)
+    }
+    for path in sorted(paths):
         if path.name.lower() == "sap_functionality_map.json":
             continue
         if not path.exists():
@@ -291,7 +377,10 @@ def load_knowledge_base():
                     if normalized:
                         knowledge.append(normalized)
             elif isinstance(data, dict):
-                knowledge.extend(flatten_downloaded_ariba_kb(data, path))
+                if isinstance(data.get("entries"), list):
+                    knowledge.extend(flatten_sharepoint_chatbot_kb(data, path))
+                else:
+                    knowledge.extend(flatten_downloaded_ariba_kb(data, path))
         except Exception:
             continue
     return knowledge
@@ -937,6 +1026,15 @@ def is_ariba_related(text):
     )
 
 
+def has_explicit_sap_context(text):
+    search_text = f"{text} {expand_abbreviations(text)}"
+    return bool(re.search(
+        r"\b(sap|ariba|procurement|purchasing|purchase order|purchase requisition|requisition|supplier|vendor|catalog|po|pr|rfq|rfx|rfp|rfi|sourcing|guided buying|cxml)\b",
+        search_text,
+        re.I,
+    ))
+
+
 def playbook_answer(intent, payload, relevant_policies, style="human", source_item=None):
     source = source_item or {}
     title_map = {
@@ -1268,8 +1366,28 @@ def render_homepage(config):
     html = template_path.read_text(encoding="utf-8")
     html = html.replace("__MODEL_BACKEND__", config.get("model_backend", "ollama"))
     html = html.replace("__OLLAMA_MODEL__", config.get("ollama_model", "llama3.1:8b"))
+    html = html.replace("__DEMO_PROFILE__", config.get("demo_profile", "1B-compatible prototype"))
+    html = html.replace("__DEMO_RUNTIME_NOTE__", config.get("demo_runtime_note", "Runtime model shown in settings"))
     html = html.replace("__EMBEDDING_PATH__", config.get("embedding_model_path", "models/embedding_model"))
     return html
+
+
+def serve_asset(handler, request_path):
+    relative_path = request_path.lstrip("/").replace("/", os.sep)
+    asset_path = (ROOT / relative_path).resolve()
+    if not str(asset_path).startswith(str(ASSETS_DIR.resolve())) or not asset_path.is_file():
+        handler.send_response(404)
+        handler.end_headers()
+        return
+
+    content_type = mimetypes.guess_type(str(asset_path))[0] or "application/octet-stream"
+    body = asset_path.read_bytes()
+    handler.send_response(200)
+    handler.send_header("Content-Type", content_type)
+    handler.send_header("Content-Length", str(len(body)))
+    cors_headers(handler)
+    handler.end_headers()
+    handler.wfile.write(body)
 
 
 def cors_headers(handler):
@@ -1440,17 +1558,19 @@ def synthesize_grounded_answer(payload, config, item, response_style="human", in
     message = payload_text(payload)
     context = payload.get("context", "")
     facts = format_knowledge_hit(item)
-    prompt = f"""Answer like an expert SAP/SAP Ariba chatbot.
-Use only these facts; do not invent codes, menu paths, thresholds, tenant settings, or policy rules.
+    assistant_domain = "enterprise HR and IT helpdesk" if item.get("source_type") == "enterprise_helpdesk" else "SAP/SAP Ariba"
+    prompt = f"""Answer like an expert {assistant_domain} chatbot.
+Use only these facts; do not invent causes, emails, codes, menu paths, thresholds, tenant settings, or policy rules.
 If the facts mention an SAP transaction code, describe it as SAP GUI/SAP S/4HANA, not SAP Ariba, unless the facts explicitly say Ariba.
 Do not offer step-by-step instructions unless the facts include the steps.
+Do not mention SAP unless the question or facts are about SAP.
 
 Question: {message}
 Context: {context}
 Intent: {intent or infer_intent(message + ' ' + context)}
 Facts: {json.dumps(facts, ensure_ascii=False)}
 
-Plain-text answer. Be conversational, accurate, and concise. Include the safest next step."""
+Plain-text answer. Be conversational, accurate, and concise. Use 3 to 5 short sentences. Include the safest next step."""
     try:
         synthesis_config = dict(config)
         synthesis_config["max_new_tokens"] = int(config.get("synthesis_max_new_tokens", 180))
@@ -1597,6 +1717,16 @@ def is_specific_ariba_operational_question(message, context):
     ))
 
 
+def wants_sap_transaction_guidance(message, context):
+    text = f"{message} {context}"
+    if match_exact_sap_code(message, context):
+        return True
+    if infer_intent(text) == "sap_shortcuts":
+        return True
+    actions = canonical_actions(text)
+    return bool(actions & {"create", "change", "display", "list", "compare", "monitor", "process", "forecast"})
+
+
 def route_answer(payload, config, relevant_policies):
     message = payload_text(payload)
     context = payload.get("context", "")
@@ -1631,6 +1761,14 @@ def route_answer(payload, config, relevant_policies):
             answer = synthesize_grounded_answer(payload, config, shortcut_item, response_style, intent, fallback)
             return answer, shortcut_item
         return json.dumps(format_knowledge_hit(shortcut_item), ensure_ascii=False), shortcut_item
+    enterprise_item = match_ariba_knowledge(message, context)
+    if enterprise_item and enterprise_item.get("source_type") == "enterprise_helpdesk" and not has_explicit_sap_context(f"{message} {context}"):
+        enterprise_item = enrich_with_related_sources(enterprise_item, message, context)
+        if response_style in {"human", "action"}:
+            fallback = playbook_answer(intent, payload, relevant_policies, style=response_style, source_item=enterprise_item)
+            answer = synthesize_grounded_answer(payload, config, enterprise_item, response_style, intent, fallback)
+            return answer, enterprise_item
+        return json.dumps(format_knowledge_hit(enterprise_item), ensure_ascii=False), enterprise_item
     if intent in {"sourcing", "integration"}:
         knowledge_item = match_ariba_knowledge(message, context)
         if knowledge_item:
@@ -1643,6 +1781,15 @@ def route_answer(payload, config, relevant_policies):
     if is_specific_ariba_operational_question(message, context):
         knowledge_item = match_ariba_knowledge(message, context)
         if knowledge_item:
+            knowledge_item = enrich_with_related_sources(knowledge_item, message, context)
+            if response_style in {"human", "action"}:
+                fallback = playbook_answer(intent, payload, relevant_policies, style=response_style, source_item=knowledge_item)
+                answer = synthesize_grounded_answer(payload, config, knowledge_item, response_style, intent, fallback)
+                return answer, knowledge_item
+            return json.dumps(format_knowledge_hit(knowledge_item), ensure_ascii=False), knowledge_item
+    if intent in {"approval", "supplier_onboarding", "catalog_po", "buyer_registration", "requisition_number"} and not wants_sap_transaction_guidance(message, context):
+        knowledge_item = match_ariba_knowledge(message, context)
+        if knowledge_item and knowledge_item.get("source_type") != "downloaded_tcode":
             knowledge_item = enrich_with_related_sources(knowledge_item, message, context)
             if response_style in {"human", "action"}:
                 fallback = playbook_answer(intent, payload, relevant_policies, style=response_style, source_item=knowledge_item)
@@ -1803,6 +1950,9 @@ class ProcurementHandler(BaseHTTPRequestHandler):
             html = render_homepage(config)
             self._send_html(200, html)
             return
+        if self.path.startswith("/assets/"):
+            serve_asset(self, self.path)
+            return
         if self.path == "/favicon.ico":
             self.send_response(204)
             self.end_headers()
@@ -1834,6 +1984,7 @@ class ProcurementHandler(BaseHTTPRequestHandler):
                 return
 
             config = load_config()
+            config = apply_runtime_config_overrides(config, payload)
 
             if self.path == "/procurement/chat":
                 session_id = payload.get("session_id") or str(uuid.uuid4())
@@ -1876,6 +2027,7 @@ class ProcurementHandler(BaseHTTPRequestHandler):
                 response_payload = {
                     "session_id": session_id,
                     "answer": answer,
+                    "model": config.get("ollama_model"),
                     "relevant_policies": [name for name, _ in relevant_policies],
                 }
 
@@ -2212,7 +2364,7 @@ if __name__ == "__main__":
     from http.server import ThreadingHTTPServer
 
     server = ThreadingHTTPServer((host, port), ProcurementHandler)
-    print(f"Local procurement LLM server running on http://{host}:{port}")
+    print(f"Sam Copilot server running on http://{host}:{port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

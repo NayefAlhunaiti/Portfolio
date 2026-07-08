@@ -18,7 +18,7 @@ from ariba_adapter import execute_action
 from ml_pipeline.eda import aggregate, analyze_dir
 
 
-SERVER_NAME = "local-procurement-mcp"
+SERVER_NAME = "sam-copilot-mcp"
 PROTOCOL_VERSION = "2024-11-05"
 
 

@@ -4,7 +4,7 @@ Practical AI, cloud, and product projects with clear setup notes, supporting doc
 
 ## Featured Project
 
-- SAP Ariba Procurement Copilot
+- Sam Copilot
 - AI Powered Fitness Ecosystem
 - Cloud-Based Pneumonia Detection
 - Multi-Task Learning for AI Job Insights

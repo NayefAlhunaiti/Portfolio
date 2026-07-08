@@ -1,10 +1,10 @@
-# SAP Ariba Procurement Copilot
+# Sam Copilot
 
-SAP Ariba Procurement Copilot is a local-first assistant for procurement teams. It serves a browser chat UI, answers SAP Ariba and SAP procurement workflow questions from local policy files, and keeps Ariba write-back simulated unless you explicitly enable a real adapter.
+Sam Copilot is a local-first assistant for enterprise support teams. It serves a browser chat UI, answers HR, IT helpdesk, SAP Ariba, and SAP procurement workflow questions from local knowledge files, and keeps Ariba write-back simulated unless you explicitly enable a real adapter.
 
 ## Highlights
 
-- Browser-based procurement copilot with local HTTP endpoints
+- Browser-based Sam Copilot chat window with local HTTP endpoints
 - SAP Ariba knowledge routing from curated files in `policies/`
 - Ollama-first chat generation with configurable model settings
 - Simulated Ariba execution flow for safe demos and testing
@@ -15,7 +15,7 @@ SAP Ariba Procurement Copilot is a local-first assistant for procurement teams. 
 ## Project Structure
 
 - `app.py` - HTTP server, chat UI, routing, sessions, audit logging, training, and validation endpoints
-- `ui.html` - single-page browser interface
+- `ui.html` - bottom-right Sam Copilot chat window
 - `mcp_server.py` - MCP-compatible JSON-RPC stdio server
 - `ariba_adapter.py` - safe-by-default SAP Ariba adapter shim
 - `policies/` - local SAP Ariba, SAP documentation, transaction-code, and policy knowledge
@@ -83,7 +83,7 @@ To use a different local model, update:
 python app.py
 ```
 
-Open the local URL printed by the server, then use the browser UI to ask SAP Ariba procurement questions.
+Open the local URL printed by the server, then use the browser UI to ask HR, IT helpdesk, SAP Ariba, or procurement questions.
 
 Useful endpoints:
 

@@ -1,0 +1,666 @@
+{
+  "metadata": {
+    "dataset_name": "Generic Enterprise SharePoint Chatbot Knowledge Base",
+    "version": "1.0.0-prototype",
+    "created": "2026-07-08",
+    "purpose": "Safe generic prototype data for a local secure-company SharePoint chatbot",
+    "privacy_note": "Contains no real company confidential information, employee data, or proprietary internal documents.",
+    "recommended_retrieval": "hybrid keyword + vector search",
+    "schema_fields": [
+      "id",
+      "domain",
+      "category",
+      "title",
+      "question_variants",
+      "keywords",
+      "answer",
+      "resolution_steps",
+      "requires_authentication",
+      "priority",
+      "escalation_team",
+      "estimated_resolution",
+      "related_topics",
+      "source_type",
+      "safe_for_local_prototype",
+      "last_reviewed"
+    ],
+    "domain": "IT Helpdesk",
+    "entry_count": 20
+  },
+  "entries": [
+    {
+      "id": "IT-0001",
+      "domain": "IT Helpdesk",
+      "category": "accounts_access",
+      "title": "Password reset",
+      "question_variants": [
+        "I forgot my password",
+        "Reset my password",
+        "Password expired",
+        "Cannot sign in",
+        "Windows password not working"
+      ],
+      "keywords": [
+        "MFA setup",
+        "Account lockout"
+      ],
+      "answer": "Use the approved self-service password reset option when available. If it fails, contact IT after identity verification. Never share passwords in chat or email.",
+      "resolution_steps": [
+        "Open the password reset portal or lock screen reset option.",
+        "Verify your identity using MFA or security questions.",
+        "Create a new password that meets policy.",
+        "Sign out and sign back in on laptop, email, VPN, and mobile apps."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "Identity and Access Management",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0002",
+      "domain": "IT Helpdesk",
+      "category": "accounts_access",
+      "title": "Account locked",
+      "question_variants": [
+        "My account is locked",
+        "Too many login attempts",
+        "Unlock my account",
+        "AD account locked"
+      ],
+      "keywords": [
+        "Password reset",
+        "Saved credentials"
+      ],
+      "answer": "Accounts are usually locked after repeated failed sign-in attempts. Wait for automatic unlock if configured or request IT unlock after verification.",
+      "resolution_steps": [
+        "Stop retrying with old password.",
+        "Check keyboard layout and caps lock.",
+        "Contact IT if urgent.",
+        "After unlock, update saved passwords on phone, Outlook, VPN, and browser."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "Identity and Access Management",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0003",
+      "domain": "IT Helpdesk",
+      "category": "accounts_access",
+      "title": "Multi-factor authentication setup",
+      "question_variants": [
+        "Set up MFA",
+        "Authenticator app setup",
+        "Need MFA",
+        "New phone MFA",
+        "MFA not working"
+      ],
+      "keywords": [
+        "VPN login",
+        "Password reset"
+      ],
+      "answer": "MFA protects company systems. Register the approved authenticator app and keep a backup verification method if policy allows.",
+      "resolution_steps": [
+        "Install the approved authenticator app.",
+        "Open security settings.",
+        "Scan the QR code.",
+        "Confirm the test notification or code.",
+        "Save recovery options according to policy."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "Identity and Access Management",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0004",
+      "domain": "IT Helpdesk",
+      "category": "network",
+      "title": "VPN connection issue",
+      "question_variants": [
+        "VPN not connecting",
+        "Cannot connect remotely",
+        "VPN error",
+        "Remote access down"
+      ],
+      "keywords": [
+        "MFA setup",
+        "Remote Desktop"
+      ],
+      "answer": "VPN issues may be caused by internet connectivity, expired password, MFA failure, certificate issues, or service outage.",
+      "resolution_steps": [
+        "Confirm internet works without VPN.",
+        "Restart VPN client.",
+        "Check password and MFA prompt.",
+        "Try another network.",
+        "Send error message and screenshot to IT if unresolved."
+      ],
+      "requires_authentication": true,
+      "priority": "high",
+      "escalation_team": "Network Team",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0005",
+      "domain": "IT Helpdesk",
+      "category": "email",
+      "title": "Outlook not sending email",
+      "question_variants": [
+        "Outlook email stuck",
+        "Cannot send email",
+        "Email in outbox",
+        "SMTP issue"
+      ],
+      "keywords": [
+        "Mailbox quota",
+        "Shared mailbox"
+      ],
+      "answer": "Emails stuck in Outbox often indicate connectivity, large attachments, mailbox quota, or authentication problems.",
+      "resolution_steps": [
+        "Check internet and VPN if required.",
+        "Remove oversized attachments or use SharePoint links.",
+        "Restart Outlook.",
+        "Check mailbox quota.",
+        "Open webmail to confirm service availability."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Messaging Team",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0006",
+      "domain": "IT Helpdesk",
+      "category": "email",
+      "title": "Shared mailbox access",
+      "question_variants": [
+        "Need shared mailbox",
+        "Cannot open shared mailbox",
+        "Add department mailbox",
+        "Access team mailbox"
+      ],
+      "keywords": [
+        "Distribution group",
+        "Permissions"
+      ],
+      "answer": "Shared mailbox access requires manager or mailbox owner approval. IT grants permission after approval.",
+      "resolution_steps": [
+        "Submit access request.",
+        "Attach approval from mailbox owner or manager.",
+        "Restart Outlook after access is granted.",
+        "Use webmail if Outlook does not auto-map."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Messaging Team",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0007",
+      "domain": "IT Helpdesk",
+      "category": "collaboration",
+      "title": "Teams meeting audio issue",
+      "question_variants": [
+        "Teams microphone not working",
+        "No sound in Teams",
+        "Camera not working",
+        "Teams call issue"
+      ],
+      "keywords": [
+        "Headset",
+        "Camera",
+        "Drivers"
+      ],
+      "answer": "Teams audio/video issues are usually caused by device permissions, selected input/output device, driver issues, or browser/app problems.",
+      "resolution_steps": [
+        "Check Teams device settings.",
+        "Allow camera and microphone permissions.",
+        "Reconnect headset.",
+        "Restart Teams.",
+        "Test in browser or desktop app."
+      ],
+      "requires_authentication": false,
+      "priority": "medium",
+      "escalation_team": "IT Service Desk",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0008",
+      "domain": "IT Helpdesk",
+      "category": "collaboration",
+      "title": "SharePoint permission request",
+      "question_variants": [
+        "Need SharePoint access",
+        "Cannot open SharePoint file",
+        "Access denied SharePoint",
+        "Request site access"
+      ],
+      "keywords": [
+        "OneDrive sync",
+        "File permissions"
+      ],
+      "answer": "SharePoint access should be granted using least privilege and approved by the site owner.",
+      "resolution_steps": [
+        "Use the request access button if available.",
+        "Ask the site owner to approve.",
+        "Specify read or edit access.",
+        "Do not request owner access unless required."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "SharePoint Admin",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0009",
+      "domain": "IT Helpdesk",
+      "category": "files",
+      "title": "OneDrive sync problem",
+      "question_variants": [
+        "OneDrive not syncing",
+        "Files not updating",
+        "Sync pending",
+        "OneDrive red icon"
+      ],
+      "keywords": [
+        "SharePoint permissions",
+        "Deleted files"
+      ],
+      "answer": "OneDrive sync issues can come from path length, invalid characters, storage limits, or sign-in problems.",
+      "resolution_steps": [
+        "Check OneDrive status icon.",
+        "Sign in again if prompted.",
+        "Rename files with unsupported characters.",
+        "Reduce very long folder paths.",
+        "Pause and resume sync."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Endpoint Support",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0010",
+      "domain": "IT Helpdesk",
+      "category": "hardware",
+      "title": "Laptop slow performance",
+      "question_variants": [
+        "Laptop is slow",
+        "Computer freezing",
+        "High CPU",
+        "Slow startup"
+      ],
+      "keywords": [
+        "Windows Update",
+        "Disk cleanup"
+      ],
+      "answer": "Slow performance may be caused by too many startup apps, low disk space, pending updates, malware scanning, or insufficient memory.",
+      "resolution_steps": [
+        "Restart the laptop.",
+        "Close unused apps.",
+        "Check disk space.",
+        "Install pending updates.",
+        "Contact IT if slowness continues after reboot."
+      ],
+      "requires_authentication": false,
+      "priority": "medium",
+      "escalation_team": "Endpoint Support",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0011",
+      "domain": "IT Helpdesk",
+      "category": "hardware",
+      "title": "Laptop will not power on",
+      "question_variants": [
+        "Laptop not turning on",
+        "Black screen laptop",
+        "No power",
+        "Device dead"
+      ],
+      "keywords": [
+        "Battery issue",
+        "Docking station"
+      ],
+      "answer": "A laptop that does not power on may have a battery, charger, docking station, or hardware issue.",
+      "resolution_steps": [
+        "Connect the official charger directly.",
+        "Hold power button for 15 seconds.",
+        "Disconnect dock and accessories.",
+        "Try another outlet.",
+        "Contact IT for hardware inspection."
+      ],
+      "requires_authentication": false,
+      "priority": "high",
+      "escalation_team": "Endpoint Support",
+      "estimated_resolution": "4 business hours",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0012",
+      "domain": "IT Helpdesk",
+      "category": "hardware",
+      "title": "External monitor not detected",
+      "question_variants": [
+        "Monitor not detected",
+        "Second screen not working",
+        "Display issue",
+        "Dock monitor problem"
+      ],
+      "keywords": [
+        "Docking station",
+        "Drivers"
+      ],
+      "answer": "External monitor issues are commonly caused by cable, dock, display input, driver, or display setting problems.",
+      "resolution_steps": [
+        "Check cable and monitor power.",
+        "Select correct monitor input.",
+        "Reconnect dock.",
+        "Press Windows+P and choose Extend.",
+        "Restart laptop if needed."
+      ],
+      "requires_authentication": false,
+      "priority": "medium",
+      "escalation_team": "Endpoint Support",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0013",
+      "domain": "IT Helpdesk",
+      "category": "printing",
+      "title": "Printer not printing",
+      "question_variants": [
+        "Printer not working",
+        "Print job stuck",
+        "Cannot print",
+        "Printer offline"
+      ],
+      "keywords": [
+        "Printer driver",
+        "Scanner"
+      ],
+      "answer": "Printing issues may be caused by offline printers, stuck queues, network issues, or missing drivers.",
+      "resolution_steps": [
+        "Check printer power and paper.",
+        "Cancel stuck print jobs.",
+        "Restart printer.",
+        "Confirm you are on company network.",
+        "Reinstall printer from approved printer list."
+      ],
+      "requires_authentication": false,
+      "priority": "low",
+      "escalation_team": "Workplace IT",
+      "estimated_resolution": "1 business day",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0014",
+      "domain": "IT Helpdesk",
+      "category": "security",
+      "title": "Report phishing email",
+      "question_variants": [
+        "Suspicious email",
+        "Report phishing",
+        "I clicked a phishing link",
+        "Email looks fake"
+      ],
+      "keywords": [
+        "Password reset",
+        "Malware alert"
+      ],
+      "answer": "Report suspected phishing immediately using the approved reporting button or contact Security. If you clicked a link, stop entering data and report it.",
+      "resolution_steps": [
+        "Do not reply or forward externally.",
+        "Use report phishing button.",
+        "If clicked, disconnect from VPN only if instructed.",
+        "Change password if credentials were entered.",
+        "Notify Security."
+      ],
+      "requires_authentication": true,
+      "priority": "critical",
+      "escalation_team": "Security Operations",
+      "estimated_resolution": "1 hour",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0015",
+      "domain": "IT Helpdesk",
+      "category": "security",
+      "title": "USB device blocked",
+      "question_variants": [
+        "USB blocked",
+        "Cannot use USB drive",
+        "External drive not allowed",
+        "USB policy"
+      ],
+      "keywords": [
+        "Data classification",
+        "Device control"
+      ],
+      "answer": "USB storage may be blocked to protect company data. Exceptions require business justification and approval.",
+      "resolution_steps": [
+        "Submit exception request.",
+        "Include device type, business reason, duration, and data classification.",
+        "Wait for Security and manager approval."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Security Operations",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0016",
+      "domain": "IT Helpdesk",
+      "category": "software",
+      "title": "Software installation request",
+      "question_variants": [
+        "Install software",
+        "Need application",
+        "Request license",
+        "Software approval"
+      ],
+      "keywords": [
+        "License request",
+        "Admin rights"
+      ],
+      "answer": "Software installation requires approved license, security review when needed, and manager approval.",
+      "resolution_steps": [
+        "Search the software catalog.",
+        "Submit request with business reason.",
+        "Include license requirement.",
+        "Wait for approval and installation instructions."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Software Asset Management",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0017",
+      "domain": "IT Helpdesk",
+      "category": "software",
+      "title": "Admin rights request",
+      "question_variants": [
+        "Need admin rights",
+        "Run as administrator",
+        "Local admin access",
+        "Install driver requires admin"
+      ],
+      "keywords": [
+        "Software installation",
+        "Security exception"
+      ],
+      "answer": "Local admin rights are restricted. Temporary elevation may be granted for approved tasks.",
+      "resolution_steps": [
+        "Submit request with task details.",
+        "Include software/vendor and duration.",
+        "Use approved elevation tool if available.",
+        "Do not share admin credentials."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Endpoint Security",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0018",
+      "domain": "IT Helpdesk",
+      "category": "remote_access",
+      "title": "Remote Desktop issue",
+      "question_variants": [
+        "RDP not working",
+        "Cannot remote desktop",
+        "Remote server access",
+        "VDI problem"
+      ],
+      "keywords": [
+        "VPN connection issue",
+        "Server access"
+      ],
+      "answer": "Remote Desktop access depends on network connectivity, VPN, permissions, and target machine availability.",
+      "resolution_steps": [
+        "Connect VPN if required.",
+        "Confirm computer name.",
+        "Check access approval.",
+        "Restart RDP client.",
+        "Contact IT with error message."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Infrastructure Team",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0019",
+      "domain": "IT Helpdesk",
+      "category": "mobile",
+      "title": "Mobile email setup",
+      "question_variants": [
+        "Set up email on phone",
+        "Company email mobile",
+        "Enroll phone",
+        "Mobile Outlook"
+      ],
+      "keywords": [
+        "MFA setup",
+        "Device compliance"
+      ],
+      "answer": "Mobile email requires approved mobile device management and MFA enrollment.",
+      "resolution_steps": [
+        "Install approved company portal or MDM app.",
+        "Enroll device.",
+        "Install Outlook app.",
+        "Sign in and complete MFA.",
+        "Accept required security policies."
+      ],
+      "requires_authentication": true,
+      "priority": "medium",
+      "escalation_team": "Mobility Support",
+      "estimated_resolution": "2 business days",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    },
+    {
+      "id": "IT-0020",
+      "domain": "IT Helpdesk",
+      "category": "asset",
+      "title": "Lost or stolen device",
+      "question_variants": [
+        "Lost laptop",
+        "Stolen phone",
+        "Missing company device",
+        "Report lost asset"
+      ],
+      "keywords": [
+        "Password reset",
+        "Remote wipe"
+      ],
+      "answer": "Lost or stolen company devices must be reported immediately to protect company data.",
+      "resolution_steps": [
+        "Report to IT and Security immediately.",
+        "Provide asset tag, last known location, and time.",
+        "Change password if requested.",
+        "File local report if policy requires."
+      ],
+      "requires_authentication": true,
+      "priority": "critical",
+      "escalation_team": "Security Operations",
+      "estimated_resolution": "1 hour",
+      "related_topics": [],
+      "source_type": "generic prototype data",
+      "safe_for_local_prototype": true,
+      "last_reviewed": "2026-07-08"
+    }
+  ]
+}
