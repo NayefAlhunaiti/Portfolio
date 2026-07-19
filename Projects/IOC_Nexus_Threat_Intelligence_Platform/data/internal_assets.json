@@ -1,0 +1,38 @@
+[
+  {
+    "ip": "10.20.5.14",
+    "hostname": "FIN-PC-014",
+    "department": "Finance",
+    "asset_criticality": "high",
+    "owner": "Finance Operations",
+    "operating_system": "Windows 11",
+    "expected_work_hours": {
+      "start": 7,
+      "end": 18
+    }
+  },
+  {
+    "ip": "10.20.5.20",
+    "hostname": "HR-PC-008",
+    "department": "Human Resources",
+    "asset_criticality": "medium",
+    "owner": "HR Operations",
+    "operating_system": "Windows 11",
+    "expected_work_hours": {
+      "start": 7,
+      "end": 18
+    }
+  },
+  {
+    "ip": "10.20.10.5",
+    "hostname": "APP-SRV-02",
+    "department": "IT",
+    "asset_criticality": "critical",
+    "owner": "Infrastructure",
+    "operating_system": "Windows Server",
+    "expected_work_hours": {
+      "start": 0,
+      "end": 24
+    }
+  }
+]

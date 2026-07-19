@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ioc-nexus-threat-intelligence-platform"
+version = "1.0.0"
+description = "IOC Nexus Threat Intelligence Platform for internal-to-external IOC correlation and VirusTotal enrichment"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.34,<1",
+    "httpx>=0.28,<1",
+    "pydantic>=2.10,<3",
+    "python-dotenv>=1.0,<2",
+    "pandas>=2.2,<3",
+    "streamlit>=1.59,<2"
+]
+
+[project.scripts]
+ioc-nexus = "ioc_nexus.cli:main"
+ioc-nexus-generate = "ioc_nexus.synthetic_generator:main"
+ioc-nexus-train = "ioc_nexus.ml_pipeline:main"
+ioc-nexus-score = "ioc_nexus.ml_score:main"
+ioc-nexus-smart = "ioc_nexus.smart_cli:main"
+ioc-nexus-collector = "ioc_nexus.collector:main"
+ioc-nexus-windows-monitor = "ioc_nexus.windows_monitor:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

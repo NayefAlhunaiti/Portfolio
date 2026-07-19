@@ -1,0 +1,16 @@
+{
+  "internal_ip": "10.20.5.14",
+  "external_ip": "1.1.1.1",
+  "process_name": "powershell.exe",
+  "parent_process": "winword.exe",
+  "username": "finance.user",
+  "timestamp": "2026-07-15T02:34:00",
+  "destination_port": 443,
+  "bytes_sent": 2000000,
+  "whitelisted_process": true,
+  "known_business_service": false,
+  "failed_logins_10m": 2,
+  "connection_count_10m": 85,
+  "unique_destinations_10m": 2,
+  "outbound_bytes_ratio": 4.0
+}
